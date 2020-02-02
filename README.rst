@@ -1,80 +1,36 @@
-===============
-pytest-validate
-===============
+<kbd>
+  <img src="https://github.com/symonk/pylenium/blob/master/.github/.images/pytest_validate.png">
+</kbd>
+  <p></p>
 
-.. image:: https://img.shields.io/pypi/v/pytest-validate.svg
-    :target: https://pypi.org/project/pytest-validate
-    :alt: PyPI version
+[![Build Status](https://api.travis-ci.org/symonk/pytest-pylenium.svg?branch=master)](https://travis-ci.org/symonk/pytest-pylenium)
+[![License Apache](https://img.shields.io/badge/license-Apache%202-brightgreen.svg)](https://github.com/symonk/pylenium/blob/master/LICENSE)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=symonk_pylenium&metric=bugs)](https://sonarcloud.io/dashboard?id=symonk_pylenium)
+[![codecov](https://codecov.io/gh/symonk/pytest-pylenium/branch/master/graph/badge.svg)](https://codecov.io/gh/symonk/pytest-pylenium)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=symonk_pylenium&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=symonk_pylenium)
+[![Find_Me LinkedIn](https://img.shields.io/badge/Find_Me-LinkedIn-brightgreen.svg)](https://www.linkedin.com/in/simonk09/)
+[![Find_Me Slack](https://img.shields.io/badge/Find_Me-Slack-brightgreen.svg)](https://testersio.slack.com)
 
-.. image:: https://img.shields.io/pypi/pyversions/pytest-validate.svg
-    :target: https://pypi.org/project/pytest-validate
-    :alt: Python versions
+## What is pytest-validate? :flags:
+Pytest-validate is a plugin for pytest that given a python module containing a list of adhering validate functions will
+ensure the stack under test or runtime environment is as you expect before wasting time running test(s).  How it works is
+outlined below
 
-.. image:: https://travis-ci.org/symonk/pytest-validate.svg?branch=master
-    :target: https://travis-ci.org/symonk/pytest-validate
-    :alt: See Build Status on Travis CI
+pytest-validate Goals:
+ - Quickly validate a test environment or general runtime environment against X functions
+ - Create an easy way for user-defined functions to be loaded and evaluated at runtime
+ - When failure(s) occur provide powerful means of configuration and sensible error messages
 
-.. image:: https://ci.appveyor.com/api/projects/status/github/symonk/pytest-validate?branch=master
-    :target: https://ci.appveyor.com/project/symonk/pytest-validate/branch/master
-    :alt: See Build Status on AppVeyor
-
-A pytest plugin to verify the stack / test run against various functions prior to running tests
-
-----
-
-This `pytest`_ plugin was generated with `Cookiecutter`_ along with `@hackebrot`_'s `cookiecutter-pytest-plugin`_ template.
-
-
-Features
---------
-
-* TODO
+#### Important Notes:
+ - pytest-validate does **not!** support python version(s) earlier than 3.7 officially
+ - pytest-validate is open to pull requests that bring in backwards compatability but it is not a priority now
 
 
-Requirements
-------------
+ ---
 
-* TODO
+### Simple Example :hearts:
+Example:
 
-
-Installation
-------------
-
-You can install "pytest-validate" via `pip`_ from `PyPI`_::
-
-    $ pip install pytest-validate
-
-
-Usage
------
-
-* TODO
-
-Contributing
-------------
-Contributions are very welcome. Tests can be run with `tox`_, please ensure
-the coverage at least stays the same before you submit a pull request.
-
-License
--------
-
-Distributed under the terms of the `MIT`_ license, "pytest-validate" is free and open source software
-
-
-Issues
-------
-
-If you encounter any problems, please `file an issue`_ along with a detailed description.
-
-.. _`Cookiecutter`: https://github.com/audreyr/cookiecutter
-.. _`@hackebrot`: https://github.com/hackebrot
-.. _`MIT`: http://opensource.org/licenses/MIT
-.. _`BSD-3`: http://opensource.org/licenses/BSD-3-Clause
-.. _`GNU GPL v3.0`: http://www.gnu.org/licenses/gpl-3.0.txt
-.. _`Apache Software License 2.0`: http://www.apache.org/licenses/LICENSE-2.0
-.. _`cookiecutter-pytest-plugin`: https://github.com/pytest-dev/cookiecutter-pytest-plugin
-.. _`file an issue`: https://github.com/symonk/pytest-validate/issues
-.. _`pytest`: https://github.com/pytest-dev/pytest
-.. _`tox`: https://tox.readthedocs.io/en/latest/
-.. _`pip`: https://pypi.org/project/pip/
-.. _`PyPI`: https://pypi.org/project
+```python
+# coming soon!
+```
