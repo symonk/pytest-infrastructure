@@ -21,7 +21,7 @@ setup(
     license='MIT',
     url='https://github.com/symonk/pytest-validate',
     description='A pytest plugin to verify the stack / test run against various functions prior to running tests',
-    long_description=read('README.rst'),
+    long_description=read('README.md'),
     py_modules=['pytest_validate'],
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
     install_requires=['pytest>=5.3.5'],

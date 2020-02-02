@@ -1,34 +1,26 @@
 # Config file for automatic testing at travis-ci.org
-
-sudo: false
+sudo: required
 language: python
-
-matrix:
-    include:
-      - python: 2.7
-        env: TOX_ENV=py27
-      - python: 3.4
-        env: TOX_ENV=py34
-      - python: 3.5
-        env: TOX_ENV=py35
-      - python: 3.6
-        env: TOX_ENV=py36
-      - python: 3.7
-        env: TOX_ENV=py37
-      - python: pypy
-        env: TOX_ENV=pypy
-      - python: 3.6
-        env: TOX_ENV=flake8
+dist: xenial
+python: 3.7
 
 install:
-  - pip install tox
-
+  - pip install tox-travis
 script:
-  - tox -e $TOX_ENV
+  - tox -p 5
+  - sonar-scanner -Dsonar.projectKey=symonk_validate  -Dsonar.organization=symonk-github
+branches:
+  only:
+    - master
+git:
+  depth: 99999
 
-before_cache:
-  - rm -rf $HOME/.cache/pip/log
 
 cache:
   directories:
-    - $HOME/.cache/pip
+    - "$HOME/.sonar/cache"
+addons:
+  apt:
+    update: true
+  sonarcloud:
+    organization: symonk-github
