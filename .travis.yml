@@ -1,14 +1,14 @@
 # Config file for automatic testing at travis-ci.org
 sudo: required
 language: python
-dist: xenial
+dist: trusty
 python: 3.7
 
 install:
   - pip install tox-travis
 script:
   - tox -p 5
-  - sonar-scanner -Dsonar.projectKey=symonk_validate  -Dsonar.organization=symonk-github
+  - sonar-scanner
 branches:
   only:
     - master
@@ -24,3 +24,5 @@ addons:
     update: true
   sonarcloud:
     organization: symonk-github
+    token:
+      secure: "1T979psp1U8uPFOKJfSzQklbYdqLwYbaG80HOM5ejt7p1xnumGmNHxCqqBbpIK3a6PaOt/dbBuIQqwZiM3+F+o3H7ypzFS/yhxJquqT3GFaZmZg2oegFUZChe2B+VxYvW6N8/td72SNK+RWHmj9CauAyhAURtWi5YhwCulWKPNMDOAH+86mvX1kFaRW238Sih5cVtIy6UolU/rwYMJMvxdlyakrmr5fw+EiN7CZKw3zKON4izYgYY7W/ql6wup1OXnmNvqZCs55y8Zxlq+dflFjdPK3jlQJ7J1JhhDVtgHFpSfHN3nfBGnUfvyEOAG1NMR1YGvR6YvzPa9/VHPQjWtM0jCU3um2TpGmUXtGHKZwi+sq+6sgwVLbsTexAmO3NNWMhxvRHTa21vwpCVYgaf/mfLydO3fGYGYcXmwyOKnwFXw6pSSod8N7Mbbkmpb3Y4aMiqv0f2wOmwOaW/UKCg6L1Tb+beadxEkiaLjRe067ShF9s453EHIr6s6UFquyLL+AAqk+OE4dbDY3v2ozOS1h9PTzE3JBox6ayce9Qft3TtSb6HIa0HCRH8TRcRAiImZF5nF7nIp2kd5WDMlZMPvdJWJYDCmQhOixLch0yc3taXz8MyhPHMqjDz1zAWxHHvhcZ2jxoWR0RIXF1OvsK3hpwrNQkyH8PpGT9iY49fLE="
