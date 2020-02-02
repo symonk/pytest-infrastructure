@@ -13,8 +13,6 @@ def pytest_addoption(parser):
         help='Set the value for the fixture "bar".'
     )
 
-    parser.addini('HELLO', 'Dummy pytest.ini setting')
-
 
 @pytest.fixture
 def bar(request):
