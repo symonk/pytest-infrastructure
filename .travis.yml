@@ -9,6 +9,8 @@ install:
 script:
   - tox
   - sonar-scanner
+after_success:
+    - codecov
 branches:
   only:
     - master
