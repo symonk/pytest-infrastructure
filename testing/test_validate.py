@@ -6,7 +6,7 @@ def test_accessing_validation_file_fixture_without_cli_raises(testdir):
     testdir.makepyfile(
         """
         def test_validation_file_none(validation_file):
-            pass
+            raises_exception = validation_file
     """
     )
 

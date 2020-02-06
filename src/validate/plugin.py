@@ -2,8 +2,8 @@
 
 import pytest
 
-from src.validate.exceptions import ValidationFixtureException
-from strings import VALIDATION_FX_ERROR_MESSAGE
+from validate.exceptions import ValidationFixtureException
+from validate.strings import VALIDATION_FX_ERROR_MESSAGE
 
 
 def pytest_addoption(parser):
@@ -20,7 +20,7 @@ def pytest_addoption(parser):
         action="store_false",
         dest="bypass_validation",
         default=True,
-        help="Bypass the validation functions and execute tests without checking",
+        help="Bypass the validation functions and execute testing without checking",
     )
 
 
