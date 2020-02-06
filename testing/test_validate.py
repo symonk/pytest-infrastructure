@@ -11,5 +11,5 @@ def test_accessing_validation_file_fixture_without_cli_raises(testdir):
     )
 
     result = testdir.runpytest("-v")
-    result.stdout.fnmatch_lines([f"*ValidationFixtureException*"])
+    result.stdout.fnmatch_lines(["*ValidationFixtureException*"])
     assert result.ret == 1
