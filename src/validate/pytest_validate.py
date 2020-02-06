@@ -7,20 +7,20 @@ from strings import VALIDATION_FX_ERROR_MESSAGE
 
 
 def pytest_addoption(parser):
-    group = parser.getgroup('validate')
+    group = parser.getgroup("validate")
     group.addoption(
-        '--validate-file',
-        action='store',
-        dest='validation_file',
+        "--validate-file",
+        action="store",
+        dest="validation_file",
         default=None,
-        help='File path to your .py file which contains'
+        help="File path to your .py file which contains",
     )
     group.addoption(
-        '--bypass-validation',
-        action='store_false',
-        dest='bypass_validation',
+        "--bypass-validation",
+        action="store_false",
+        dest="bypass_validation",
         default=True,
-        help='Bypass the validation functions and execute tests without checking'
+        help="Bypass the validation functions and execute tests without checking",
     )
 
 
