@@ -33,7 +33,7 @@ def validation_file(request):
     :return: Optional[FileLike]
     """
     validation_file = request.config.option.validation_file
-    if not validation_file:
+    if validation_file is not None:
         return request.config.option.validation_file
     else:
         raise ValidationFixtureException(VALIDATION_FX_ERROR_MESSAGE)
