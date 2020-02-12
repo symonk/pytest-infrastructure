@@ -39,3 +39,26 @@ Example:
 ```python
 # coming soon!
 ```
+
+---
+
+### How to Contribute to pytest-validate :Rocket:
+Thanks for considering contributions to the pytest-validate plugin.  To help you get started please read the following documentation.  All contributions will be strongly considered and I welcome contributions from anyone, experienced or new; the pytest ecosystem can be very confusing at first glance so if you have any questions or think you are doing something wrong, please open a PR with what you have and we can pair up on it.
+
+ - Easier or small contributions are or will be attached to the: `easier` issue label
+ 
+#### Getting started
+
+1. Clone the repository using: git@github.com:symonk/pytest-validate.git (ssh recommended over HTTPS)
+2. Open the cloned folder in your IDE of choice, I would recommend `Pycharm` (or if you are hardcore and dont use an IDE)
+3. Create a branch or if you prefer to work on forks do that
+4. Push change(s) to issue/tickets you wish to solve
+5. Open a PR
+
+#### PR Guidelines
+Under **NO** circumstances will any PR be accepted with the following:
+
+- Failing travis CI build / tests
+- Decrease in unit test coverage percentage
+
+If your PR is failing on either of these two, it will only be considered mergable when they have been rectified (unless there is a core travis issue in which I will try to resolve immediately)
