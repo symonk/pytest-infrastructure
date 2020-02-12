@@ -32,6 +32,8 @@ pytest-validate Goals:
   - Create your @validate decorated functions in your own custom module.py
   - Pass the file path to your module through --validation-file=path
   - pytest-validate will automatically scan and execute your functions before running any tests
+  
+---
 
 ### Simple Example :hearts:
 Example:
