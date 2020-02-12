@@ -16,7 +16,7 @@ Pytest-validate is a plugin for pytest that given a python module containing a l
 ensure the stack under test or runtime environment is as you expect before wasting time running test(s).  How it works is
 outlined below
 
-pytest-validate Goals:
+**pytest-validate Goals:**
  - Quickly validate a test environment or general runtime environment against X functions
  - Create an easy way for user-defined functions to be loaded and evaluated at runtime
  - When failure(s) occur provide powerful means of configuration and sensible error messages
