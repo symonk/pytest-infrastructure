@@ -51,13 +51,13 @@ Thanks for considering contributions to the pytest-validate plugin.  To help you
  
 #### Getting started :rocket:
 
-1. Clone the repository using: `git@github.com:username/pytest-validate.git (ssh recommended over HTTPS)`
-2. Open the cloned folder in your IDE of choice, I would recommend `Pycharm` (or if you are hardcore and dont use an IDE)
-3. Create a branch or if you prefer to work on forks do that
-4. Push change(s) for issue/tickets you wish to solve
-5. Open a PR
+- Clone the repository using: `git@github.com:username/pytest-validate.git (ssh recommended over HTTPS)`
+- Open the cloned folder in your IDE of choice, I would recommend `Pycharm` (or if you are hardcore and dont use an IDE)
+- Create a branch or if you prefer to work on forks do that
+- Push change(s) for issue/tickets you wish to solve
+- Open a PR
 
-`n.b -> If you are solving an issue, please include closes #issue-number in the commit message, for example: "fixes #1"`
+`If you are solving an issue, please include closes #issue-number in the commit message, for example: "fixes #1"`
 
 #### PR Guidelines :rocket:
 Under **NO** circumstances will any PR be accepted with the following:
@@ -66,6 +66,5 @@ Under **NO** circumstances will any PR be accepted with the following:
 - Decrease in unit test coverage percentage
 
 If your PR is failing on either of these two, it will only be considered mergable when they have been rectified (unless there is a core travis issue in which I will try to resolve immediately)
-
 
 ---
