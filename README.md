@@ -16,7 +16,7 @@ Pytest-validate is a plugin for pytest that given a python module containing a l
 ensure the stack under test or runtime environment is as you expect before wasting time running test(s).  How it works is
 outlined below
 
-pytest-validate Goals:
+**pytest-validate Goals:**
  - Quickly validate a test environment or general runtime environment against X functions
  - Create an easy way for user-defined functions to be loaded and evaluated at runtime
  - When failure(s) occur provide powerful means of configuration and sensible error messages
@@ -27,6 +27,13 @@ pytest-validate Goals:
 
 
  ---
+ 
+ ### How It Works:
+  - Create your @validate decorated functions in your own custom module.py
+  - Pass the file path to your module through --validation-file=path
+  - pytest-validate will automatically scan and execute your functions before running any tests
+  
+---
 
 ### Simple Example :hearts:
 Example:
@@ -34,3 +41,30 @@ Example:
 ```python
 # coming soon!
 ```
+
+---
+
+### How to Contribute to pytest-validate :rocket:
+Thanks for considering contributions to the pytest-validate plugin.  To help you get started please read the following documentation.  All contributions will be strongly considered and I welcome contributions from anyone, experienced or new; the pytest ecosystem can be very confusing at first glance so if you have any questions or think you are doing something wrong, please open a PR with what you have and we can pair up on it.
+
+ - Easier or small contributions are or will be attached to the: `easier` issue label
+ 
+#### Getting started :rocket:
+
+- Clone the repository using: `git@github.com:username/pytest-validate.git (ssh recommended over HTTPS)`
+- Open the cloned folder in your IDE of choice, I would recommend `Pycharm` (or if you are hardcore and dont use an IDE)
+- Create a branch or if you prefer to work on forks do that
+- Push change(s) for issue/tickets you wish to solve
+- Open a PR
+
+`If you are solving an issue, please include closes #issue-number in the commit message, for example: "fixes #1"`
+
+#### PR Guidelines :rocket:
+Under **NO** circumstances will any PR be accepted with the following:
+
+- Failing travis CI build / tests
+- Decrease in unit test coverage percentage
+
+If your PR is failing on either of these two, it will only be considered mergable when they have been rectified (unless there is a core travis issue in which I will try to resolve immediately)
+
+---
