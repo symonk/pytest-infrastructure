@@ -27,12 +27,12 @@ outlined below
 
 
  ---
- 
+
  ### How It Works:
   - Create your @validate decorated functions in your own custom module.py
   - Pass the file path to your module through --validation-file=path
   - pytest-validate will automatically scan and execute your functions before running any tests
-  
+
 ---
 
 ### Simple Example :hearts:
@@ -48,7 +48,7 @@ Example:
 Thanks for considering contributions to the pytest-validate plugin.  To help you get started please read the following documentation.  All contributions will be strongly considered and I welcome contributions from anyone, experienced or new; the pytest ecosystem can be very confusing at first glance so if you have any questions or think you are doing something wrong, please open a PR with what you have and we can pair up on it.
 
  - Easier or small contributions are or will be attached to the: `easier` issue label
- 
+
 #### Getting started :rocket:
 
 - Clone the repository using: `git@github.com:username/pytest-validate.git (ssh recommended over HTTPS)`

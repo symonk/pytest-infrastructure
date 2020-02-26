@@ -13,7 +13,7 @@ def pytest_addoption(parser):
         action="store",
         dest="validation_file",
         default=None,
-        help="File path to your .py file which contains",
+        help="File path to your .py file which contains validate functions",
     )
     group.addoption(
         "--bypass-validation",
