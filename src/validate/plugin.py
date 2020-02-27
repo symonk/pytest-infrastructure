@@ -12,15 +12,25 @@ def pytest_addoption(parser):
         "--validate-file",
         action="store",
         dest="validation_file",
-        default=None,
         help="File path to your .py file which contains validate functions",
     )
     group.addoption(
         "--bypass-validation",
         action="store_false",
         dest="bypass_validation",
-        default=True,
         help="Bypass the validation functions and execute testing without checking, disable the plugin completely",
+    )
+    group.addoption(
+        "--validate-env",
+        action="store",
+        help="Environment file to execute validate functions dynamically at runtime",
+    )
+    group.addoption(
+        "--validate-thread-count",
+        action="store",
+        type=int,
+        default=0,
+        help="If specified will use threads to execute validate threads in parallel",
     )
 
 
@@ -54,6 +64,7 @@ class PytestValidate:
     def __init__(self, config: Config):
         self.config = config
         self.name = "pytest_validate"
+        self.functions = None
 
     @hookspec(historic=True)
     def pytest_plugin_registered(self, plugin, manager):
@@ -61,3 +72,9 @@ class PytestValidate:
             print(
                 "pytest-validate has been registered, --bypass-validation was not passed"
             )
+
+    def collect_validate_functions(self):
+        pass
+
+    def execute_validate_functions(self):
+        pass
