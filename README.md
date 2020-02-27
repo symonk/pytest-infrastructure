@@ -39,7 +39,10 @@ outlined below
 Example:
 
 ```python
-# coming soon!
+from pytest_validate import Validate
+@Validate(order=1, enabled=True, exclude_on_environments='staging', thread_safe=True)
+def some_function_to_validate_the_environment():
+    pass
 ```
 
 ---
