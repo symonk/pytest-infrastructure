@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import pytest
-from _pytest.config import Config, hookspec
-
+from _pytest.config import Config
 from validate.exceptions import ValidationFixtureException
+from validate.pathfinder import ValidateFunctionFinder
 from validate.strings import VALIDATION_FX_ERROR_MESSAGE
 
 
@@ -11,13 +11,11 @@ def pytest_addoption(parser):
     group.addoption(
         "--validate-file",
         action="store",
-        dest="validation_file",
         help="File path to your .py file which contains validate functions",
     )
     group.addoption(
         "--bypass-validation",
         action="store_false",
-        dest="bypass_validation",
         help="Bypass the validation functions and execute testing without checking, disable the plugin completely",
     )
     group.addoption(
@@ -35,20 +33,21 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config: Config):
-    if config.getoption("bypass_validation"):
+    if config.getoption("--bypass-validation"):
         plugin = PytestValidate(config)
         config.pluginmanager.register(plugin, plugin.name)
+        plugin.collect_validate_functions()
 
 
 @pytest.fixture
 def validation_file(request):
     """
-    Function scoped fixture to return the file path (if specified at runtime to --validation_file=
+    Function scoped fixture to return the file path (if specified at runtime to --validation-file=
     If no file path is passed and this fixture has attempted use we will raise an exception, failing the test
     :param request: the dependency injected pytest request fixture
     :return: Optional[FileLike]
     """
-    validation_file = request.config.option.validation_file
+    validation_file = request.config.getoption("--validate-file")
     if validation_file is not None:
         return request.config.option.validation_file
     else:
@@ -65,16 +64,14 @@ class PytestValidate:
         self.config = config
         self.name = "pytest_validate"
         self.functions = None
+        self.file_path = self.config.getoption("--validate-file")
+        self.validate_finder = ValidateFunctionFinder(self.file_path)
 
-    @hookspec(historic=True)
-    def pytest_plugin_registered(self, plugin, manager):
+    def pytest_plugin_registered(self, plugin):
         if getattr(plugin, "name", None) == self.name:
             print(
                 "pytest-validate has been registered, --bypass-validation was not passed"
             )
 
     def collect_validate_functions(self):
-        pass
-
-    def execute_validate_functions(self):
-        pass
+        self.functions = self.validate_finder.gather_validate_functions()

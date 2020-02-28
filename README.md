@@ -45,8 +45,8 @@ from pytest_validate import Validate
 def some_function_to_validate_the_environment():
     # This will be ran with other thread safe validate functions
     pass
-    
-    
+
+
 @Validate(order=2, enabled=True, exclude_on_environments='production', thread_safe=False)
 def some_other_function_to_validate_the_stack():
     # This will be run sequentially in isolation (see docs for how order= works with thread_safe=False

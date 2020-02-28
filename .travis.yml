@@ -10,7 +10,7 @@ script:
   - tox
   - sonar-scanner
 after_success:
-    - codecov
+  - codecov
 branches:
   only:
     - master
