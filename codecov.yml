@@ -1,1 +1,3 @@
 comment: off
+fixes:
+  - "before/test-*::after/"
