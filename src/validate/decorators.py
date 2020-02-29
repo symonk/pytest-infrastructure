@@ -7,8 +7,6 @@ class Validate:
         order: int = 0,
         enabled: bool = True,
         exclude_on_environment: List = None,
-        *args,
-        **wa
     ):
         self.order = order
         self.enabled = enabled
