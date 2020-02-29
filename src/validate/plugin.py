@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import pytest
 from _pytest.config import Config
-from validate.exceptions import ValidationFixtureException
-from validate.pathfinder import ValidateFunctionFinder
-from validate.strings import VALIDATION_FX_ERROR_MESSAGE
+from .exceptions import ValidationFixtureException
+from .pathfinder import ValidateFunctionFinder
+from .strings import VALIDATION_FX_ERROR_MESSAGE
 
 
 def pytest_addoption(parser):
@@ -11,6 +11,7 @@ def pytest_addoption(parser):
     group.addoption(
         "--validate-file",
         action="store",
+        default=None,
         help="File path to your .py file which contains validate functions",
     )
     group.addoption(
@@ -48,8 +49,8 @@ def validation_file(request):
     :return: Optional[FileLike]
     """
     validation_file = request.config.getoption("--validate-file")
-    if validation_file is not None:
-        return request.config.option.validation_file
+    if validation_file:
+        return validation_file
     else:
         raise ValidationFixtureException(VALIDATION_FX_ERROR_MESSAGE)
 
