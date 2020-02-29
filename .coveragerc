@@ -1,7 +1,7 @@
 [run]
 include =
   src/*
-  tests/*
+  testing/*
 parallel = 1
 branch = 1
 
@@ -19,3 +19,5 @@ exclude_lines =
     ^\s*raise NotImplementedError\b
     ^\s*return NotImplemented\b
     ^\s*if TYPE_CHECKING:
+
+
