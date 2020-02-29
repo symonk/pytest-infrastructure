@@ -2,6 +2,12 @@
 include =
   src/*
   testing/*
+   */lib/python*/site-packages/pytest_validate/*
+  */lib/python*/site-packages/pytest_validate.py
+  */pypy*/site-packages/pytest_validate/*
+  */pypy*/site-packages/pytest_validate.py
+  *\Lib\site-packages\pytest_validate\*
+  *\Lib\site-packages\pytest_validate.py
 parallel = 1
 branch = 1
 
