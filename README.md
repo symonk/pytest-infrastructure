@@ -38,11 +38,11 @@ outlined below
 Example:
 
 ```python
-from validate import Validate
+from pytest_validate import Validate
 
 @Validate(order=1, enabled=True, exclude_on_environments='staging', thread_safe=True)
 def some_function_to_validate_the_environment():
-    # This will be ran with other thread safe validate functions
+    pytest_validate
     pass
 
 

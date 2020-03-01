@@ -37,7 +37,7 @@ def test_validation_fixture_is_passed_through(testdir, valid_file_one_func):
         """
         from testing.testing_utils import get_sample_validate_file
 
-        def test_validation_fx_is_passed_through(validation_file):
+        def test_validation_file(validation_file):
             assert validation_file == get_sample_validate_file()
         """
     )

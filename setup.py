@@ -5,6 +5,7 @@ with open("README.md") as f:
 
 setup(
     name="pytest-validate",
+    use_scm_version={"write_to": "src/pytest_validate/_version.py"},
     author="Simon Kerr",
     version="0.0.1",
     author_email="jackofspaces@gmail.com",
@@ -16,6 +17,7 @@ setup(
     long_description=long_description,
     packages=find_packages(where="src"),
     package_dir={"": "src"},
+    setup_requires=["setuptools_scm"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Framework :: Pytest",
@@ -26,5 +28,5 @@ setup(
         "Operating System :: OS Independent",
         "License :: OSI Approved :: Apache Software License",
     ],
-    entry_points={"pytest11": ["pytest-validate = validate.plugin"]},
+    entry_points={"pytest11": ["pytest_validate = pytest_validate.plugin"]},
 )

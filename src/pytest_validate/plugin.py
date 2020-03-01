@@ -7,12 +7,12 @@ from .strings import VALIDATION_FX_ERROR_MESSAGE
 
 
 def pytest_addoption(parser):
-    group = parser.getgroup("validate")
+    group = parser.getgroup("pytest_validate")
     group.addoption(
         "--validate-file",
         action="store",
         default=None,
-        help="File path to your .py file which contains validate functions",
+        help="File path to your .py file which contains pytest_validate functions",
     )
     group.addoption(
         "--bypass-validation",
@@ -22,22 +22,23 @@ def pytest_addoption(parser):
     group.addoption(
         "--validate-env",
         action="store",
-        help="Environment file to execute validate functions dynamically at runtime",
+        help="Environment file to execute pytest_validate functions dynamically at runtime",
     )
     group.addoption(
         "--validate-thread-count",
         action="store",
         type=int,
         default=0,
-        help="If specified will use threads to execute validate threads in parallel",
+        help="If specified will use threads to execute pytest_validate threads in parallel",
     )
 
 
 def pytest_configure(config: Config):
+    plugin = PytestValidate(config)
     if config.getoption("--bypass-validation"):
-        plugin = PytestValidate(config)
-        config.pluginmanager.register(plugin, plugin.name)
         plugin.collect_validate_functions()
+    else:
+        config.pluginmanager.unregister(plugin, plugin.name)
 
 
 @pytest.fixture
@@ -57,8 +58,8 @@ def validation_file(request):
 
 class PytestValidate:
     """
-    The pytest validate plugin object;
-    This plugin is only registered if the --bypass-validate arg is not provided, else it is completely skipped!
+    The pytest pytest_validate plugin object;
+    This plugin is only registered if the --bypass-pytest_validate arg is not provided, else it is completely skipped!
     """
 
     def __init__(self, config: Config):
