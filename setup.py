@@ -5,8 +5,8 @@ with open("README.md") as f:
 
 setup(
     name="pytest-validate",
-    version="0.1.0",
     author="Simon Kerr",
+    version="0.0.1",
     author_email="jackofspaces@gmail.com",
     maintainer="Simon Kerr",
     maintainer_email="jackofspaces@gmail.com",

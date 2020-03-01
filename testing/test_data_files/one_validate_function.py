@@ -1,4 +1,4 @@
-from src.validate import Validate
+from validate import Validate
 
 
 @Validate()

@@ -38,7 +38,6 @@ def test_validation_fixture_is_passed_through(testdir, valid_file_one_func):
         from testing.testing_utils import get_sample_validate_file
 
         def test_validation_fx_is_passed_through(validation_file):
-            print(validation_file)
             assert validation_file == get_sample_validate_file()
         """
     )
@@ -46,5 +45,12 @@ def test_validation_fixture_is_passed_through(testdir, valid_file_one_func):
 
 
 def test_validate_function_can_be_collected_from_path(testdir):
+    testdir.makepyfile(
+        """
+        def test_can_collect_validate_functions():
+            pass
+
+    """
+    )
     file_for_arg = get_sample_validate_file()
     testdir.runpytest(f"--validate-file={file_for_arg}")
