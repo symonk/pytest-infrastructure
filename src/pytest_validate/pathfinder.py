@@ -24,6 +24,9 @@ class ValidateFunctionFinder:
             print(f"Found a total of {len(functions)} functions: {functions}")
         return functions
 
+    def gather_validate_functions_2(self):
+        pass
+
     def _runpy_load_module(self):
         pass
 

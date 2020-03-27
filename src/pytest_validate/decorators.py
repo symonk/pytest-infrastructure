@@ -1,5 +1,7 @@
 from typing import List
 
+VALIDATE_FUNCTIONS = []
+
 
 class Validate:
     def __init__(
