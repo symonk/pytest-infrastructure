@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 import pytest
-from _pytest.config import Config
-from .exceptions import ValidationFixtureException
-from .pathfinder import ValidateFunctionFinder
-from .strings import VALIDATION_FX_ERROR_MESSAGE
+from validate.exceptions import ValidationFixtureException
+from validate.pathfinder import ValidateFunctionFinder
+from validate.strings import VALIDATION_FX_ERROR_MESSAGE
 
 
 def pytest_addoption(parser):
-    group = parser.getgroup("pytest_validate")
+    group = parser.getgroup("validate")
     group.addoption(
         "--validate-file",
         action="store",
         default=None,
-        help="File path to your .py file which contains pytest_validate functions",
+        help="File path to your .py file which contains validate functions",
     )
     group.addoption(
         "--bypass-validation",
@@ -22,18 +21,18 @@ def pytest_addoption(parser):
     group.addoption(
         "--validate-env",
         action="store",
-        help="Environment file to execute pytest_validate functions dynamically at runtime",
+        help="Environment file to execute validate functions dynamically at runtime",
     )
     group.addoption(
         "--validate-thread-count",
         action="store",
         type=int,
         default=0,
-        help="If specified will use threads to execute pytest_validate threads in parallel",
+        help="If specified will use threads to execute validate threads in parallel",
     )
 
 
-def pytest_configure(config: Config):
+def pytest_configure(config):
     plugin = PytestValidate(config)
     if config.getoption("--bypass-validation"):
         plugin.collect_validate_functions()
@@ -58,13 +57,13 @@ def validation_file(request):
 
 class PytestValidate:
     """
-    The pytest pytest_validate plugin object;
-    This plugin is only registered if the --bypass-pytest_validate arg is not provided, else it is completely skipped!
+    The pytest validate plugin object;
+    This plugin is only registered if the --bypass-validate arg is not provided, else it is completely skipped!
     """
 
-    def __init__(self, config: Config):
+    def __init__(self, config):
         self.config = config
-        self.name = "pytest_validate"
+        self.name = "validate"
         self.functions = None
         self.file_path = self.config.getoption("--validate-file")
         self.validate_finder = ValidateFunctionFinder(self.file_path)

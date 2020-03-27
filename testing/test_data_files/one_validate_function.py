@@ -1,4 +1,4 @@
-from src.pytest_validate.decorators import Validate
+from src.validate.decorators import Validate
 
 
 @Validate()

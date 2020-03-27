@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# pytest-pytest_validate documentation build configuration file, created by
+# pytest-validate documentation build configuration file, created by
 # sphinx-quickstart on Thu Oct  1 00:43:18 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -42,7 +42,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"pytest-pytest_validate"
+project = u"pytest-validate"
 copyright = u"2015, Simon Kerr"
 author = u"Simon Kerr"
 
@@ -252,7 +252,7 @@ man_pages = [
     (
         master_doc,
         "pytest-cookiecutterplugin_name",
-        u"pytest-pytest_validate Documentation",
+        u"pytest-validate Documentation",
         [author],
         1,
     )
@@ -271,7 +271,7 @@ texinfo_documents = [
     (
         master_doc,
         "pytest-cookiecutterplugin_name",
-        u"pytest-pytest_validate Documentation",
+        u"pytest-validate Documentation",
         author,
         "pytest-cookiecutterplugin_name",
         "One line description of project.",
