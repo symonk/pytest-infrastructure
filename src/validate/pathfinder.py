@@ -1,6 +1,7 @@
 import os
 from inspect import getmembers, isfunction
 from typing import List, Callable, Optional
+from validate import logger
 
 
 class ValidateFunctionFinder:
@@ -17,9 +18,9 @@ class ValidateFunctionFinder:
             validate_functions = [
                 fx for fx in getmembers(validate_mod) if isfunction(fx[1])
             ]
-            print([dir(fx) for fx in validate_functions])
+            logger.info([dir(fx) for fx in validate_functions])
 
         functions = []
         if functions:
-            print(f"Found a total of {len(functions)} functions: {functions}")
+            logger.info(f"Found a total of {len(functions)} functions: {functions}")
         return functions
