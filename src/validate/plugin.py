@@ -3,6 +3,7 @@ import pytest
 from validate.exceptions import ValidationFixtureException
 from validate.pathfinder import ValidateFunctionFinder
 from validate.strings import VALIDATION_FX_ERROR_MESSAGE
+from validate import logger
 
 
 def pytest_addoption(parser):
@@ -33,6 +34,7 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
+    logger.info("Pytest validate has been loaded...doing initial checks")
     plugin = PytestValidate(config)
     if config.getoption("--bypass-validation"):
         plugin.collect_validate_functions()
@@ -70,7 +72,7 @@ class PytestValidate:
 
     def pytest_plugin_registered(self, plugin):
         if getattr(plugin, "name", None) == self.name:
-            print(
+            logger.info(
                 "pytest-validate has been registered, --bypass-validation was not passed"
             )
 
