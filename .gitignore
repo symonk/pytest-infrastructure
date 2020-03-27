@@ -33,3 +33,4 @@ pytestdebug.log
 .eggs/
 .idea/
 docs/_build*
+*.log
