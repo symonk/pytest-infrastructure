@@ -36,6 +36,14 @@ def pytest_addoption(parser):
         action="store_true",
         help="Supress stdout message(s) from pytest validate"
     )
+    group.addoption(
+        "--validate-env",
+        action="store",
+        type=str,
+        default="",
+        help="Runtime environment; only_on_env= of validation functions will account for this" \
+             "Note: if not specified, all validate functions will be executed."
+    )
 
 
 def pytest_configure(config):
