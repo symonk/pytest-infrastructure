@@ -20,11 +20,6 @@ def pytest_addoption(parser):
         help="Bypass the validation functions and execute testing without checking, disable the plugin completely",
     )
     group.addoption(
-        "--validate-env",
-        action="store",
-        help="Environment file to execute validate functions dynamically at runtime",
-    )
-    group.addoption(
         "--validate-thread-count",
         action="store",
         type=int,
