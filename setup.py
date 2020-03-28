@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-install_requires = []
+install_requires = ["loguru>=0.4.1"]
 
 with open("README.md") as f:
     long_description = f.read()
