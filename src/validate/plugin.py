@@ -84,4 +84,8 @@ class PytestValidate:
 
     def pytest_sessionstart(self):
         for function in self.functions:
-            function()
+            self._go_validate(function)
+
+    @logger.catch
+    def _go_validate(self, function):
+        pass
