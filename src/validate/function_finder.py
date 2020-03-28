@@ -2,7 +2,6 @@ import os
 from importlib import util
 from inspect import getmembers, isfunction
 from typing import List, Callable
-from validate import logger
 
 
 class ValidateFunctionFinder:
@@ -20,5 +19,6 @@ class ValidateFunctionFinder:
                 for fx in getmembers(validate_mod)
                 if fx[0] != "validate" and isfunction(fx[1])
             ]
+            from validate import logger
             logger.info(validation_functions)
         return validation_functions
