@@ -35,6 +35,17 @@ def pytest_addoption(parser):
 
 def pytest_configure(config):
     logger.info("Pytest validate has been loaded...doing initial checks")
+    logger.info(
+        r"""
+    **********************************************************************
+      ____        _            _    __     __    _ _     _       _
+     |  _ \ _   _| |_ ___  ___| |_  \ \   / /_ _| (_) __| | __ _| |_ ___
+     | |_) | | | | __/ _ \/ __| __|  \ \ / / _` | | |/ _` |/ _` | __/ _ \
+     |  __/| |_| | ||  __/\__ \ |_    \ V / (_| | | | (_| | (_| | ||  __/
+     |_|    \__, |\__\___||___/\__|    \_/ \__,_|_|_|\__,_|\__,_|\__\___|
+            |___/
+    **********************************************************************"""
+    )
     plugin = PytestValidate(config)
     if config.getoption("--bypass-validation"):
         config.pluginmanager.register(plugin, plugin.name)
