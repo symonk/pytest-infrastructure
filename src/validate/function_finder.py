@@ -20,5 +20,6 @@ class ValidateFunctionFinder:
                 if fx[0] != "validate" and isfunction(fx[1])
             ]
             from validate import logger
+
             logger.info(validation_functions)
         return validation_functions
