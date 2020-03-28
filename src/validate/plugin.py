@@ -31,6 +31,11 @@ def pytest_addoption(parser):
         default=0,
         help="If specified will use threads to execute validate threads in parallel",
     )
+    group.addoption(
+        "--validate-silent",
+        action="store_true",
+        help="Supress stdout message(s) from pytest validate"
+    )
 
 
 def pytest_configure(config):
