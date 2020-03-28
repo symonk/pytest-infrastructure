@@ -5,7 +5,6 @@ from validate.decorators import validate
 from loguru import logger
 
 logger.add(
-    sys.stdout,
     colorize=True,
     enqueue=True,
 )
