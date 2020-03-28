@@ -19,6 +19,7 @@ outlined below
  - Quickly validate a test environment or general runtime environment against X functions
  - Create an easy way for user-defined functions to be loaded and evaluated at runtime
  - When failure(s) occur provide powerful means of configuration and sensible error messages
+ - Work natively with xdist enabled (as that is very common)
 
 #### Important Notes:
  - pytest-validate does **not!** support python version(s) earlier than 3.7 officially
