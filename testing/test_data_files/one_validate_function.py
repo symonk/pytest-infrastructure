@@ -1,6 +1,9 @@
-from src.validate.decorators import Validate
+from src.validate.decorators import validate
+import logging
+
+logger = logging.getLogger("validate")
 
 
-@Validate()
+@validate()
 def validate_function_one():
-    pass
+    logger.info("executing the validate function")

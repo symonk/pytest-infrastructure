@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-install_requires = ["loguru>=0.4.1"]
+install_requires = []
 
 with open("README.md") as f:
     long_description = f.read()
@@ -17,7 +17,6 @@ setup(
     author_email="jackofspaces@gmail.com",
     maintainer="Simon Kerr",
     maintainer_email="jackofspaces@gmail.com",
-    platforms=["linux", "osx", "win32"],
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     entry_points={"pytest11": ["validate = validate.plugin"]},

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import pytest
+import logging
 from validate.exceptions import ValidationFixtureException
-from validate.pathfinder import ValidateFunctionFinder
 from validate.strings import VALIDATION_FX_ERROR_MESSAGE
-from validate import logger
+from validate.function_finder import ValidateFunctionFinder
+
+logger = logging.getLogger("validate")
 
 
 def pytest_addoption(parser):
@@ -37,8 +39,12 @@ def pytest_configure(config):
     logger.info("Pytest validate has been loaded...doing initial checks")
     plugin = PytestValidate(config)
     if config.getoption("--bypass-validation"):
+        config.pluginmanager.register(plugin, plugin.name)
         plugin.collect_validate_functions()
     else:
+        logger.info(
+            "Pytest validate will be deregistered because --bypass-validation was provided"
+        )
         config.pluginmanager.unregister(plugin, plugin.name)
 
 
@@ -65,16 +71,19 @@ class PytestValidate:
 
     def __init__(self, config):
         self.config = config
-        self.name = "validate"
+        self.name = "pytest_validate"
         self.functions = None
         self.file_path = self.config.getoption("--validate-file")
-        self.validate_finder = ValidateFunctionFinder(self.file_path)
-
-    def pytest_plugin_registered(self, plugin):
-        if getattr(plugin, "name", None) == self.name:
-            logger.info(
-                "pytest-validate has been registered, --bypass-validation was not passed"
-            )
 
     def collect_validate_functions(self):
-        self.functions = self.validate_finder.gather_validate_functions()
+        logger.info(f"Pytest validate is collecting functions it can detect...")
+        self.functions = ValidateFunctionFinder(
+            self.file_path
+        ).gather_validate_functions()
+        if not self.functions:
+            logger.info(f"No validation functions detected, plugin will unregister!")
+            self.config.pluginmanager.unregister(self, self.name)
+
+    def pytest_sessionstart(self):
+        for function in self.functions:
+            function()

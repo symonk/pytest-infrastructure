@@ -25,7 +25,7 @@ def test_plugin_is_not_registered_with_bypass_flag(testdir):
         def test_with_bypass_validate(request):
             plugin_manager = request.config.pluginmanager
             assert not plugin_manager.is_registered(
-                plugin_manager.get_plugin("validate")
+                plugin_manager.get_plugin("pytest_validate")
             )
         """
     )

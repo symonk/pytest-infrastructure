@@ -1,14 +1,16 @@
-import sys
-
 from validate._version import version as __version__
-from loguru import logger
+from validate.decorators import validate
 
-logger.add("pytest_validate.log", rotation="500 MB")
-logger.add(
-    sys.stdout,
-    colorize=True,
-    format="<green>{time}</green> <level>{message}</level>",
-    enqueue=True,
+import logging
+
+logger = logging.getLogger("validate")
+file_handler = logging.FileHandler("mylog.log")
+formatter = logging.Formatter(
+    "[%(thread)d] %(asctime)s : %(levelname)s : %(name)s ==> %(message)s"
 )
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+logger.setLevel(logging.INFO)
 
-__all__ = ["__version__", logger]
+
+__all__ = ["__version__", validate]
