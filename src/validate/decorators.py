@@ -1,5 +1,5 @@
-from typing import List
 from functools import wraps
+from typing import List
 
 
 def validate(order: int = 0, enabled: bool = True, exclude_on_environment: List = None):
@@ -10,6 +10,7 @@ def validate(order: int = 0, enabled: bool = True, exclude_on_environment: List 
         func.enabled = enabled
         func.exclude_on_environment = exclude_on_environment
 
+        @wraps
         def wrapper(*args, **kwargs):
             func(*args, **kwargs)
 

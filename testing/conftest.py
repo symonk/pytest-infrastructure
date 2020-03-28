@@ -1,4 +1,5 @@
 import pytest
+
 from .testing_utils import get_path_to_test_file
 
 pytest_plugins = "pytester"

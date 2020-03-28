@@ -1,7 +1,6 @@
+import logging
 from validate._version import version as __version__
 from validate.decorators import validate
-
-import logging
 
 logger = logging.getLogger("validate")
 file_handler = logging.FileHandler("mylog.log")
@@ -11,6 +10,5 @@ formatter = logging.Formatter(
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.setLevel(logging.INFO)
-
 
 __all__ = ["__version__", validate]

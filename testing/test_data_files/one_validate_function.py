@@ -1,5 +1,6 @@
-from src.validate.decorators import validate
 import logging
+
+from src.validate.decorators import validate
 
 logger = logging.getLogger("validate")
 

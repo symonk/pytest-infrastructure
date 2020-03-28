@@ -1,8 +1,8 @@
-import os
 import logging
+import os
+from importlib import util
 from inspect import getmembers, isfunction
 from typing import List, Callable
-from importlib import util
 
 logger = logging.getLogger("validate")
 

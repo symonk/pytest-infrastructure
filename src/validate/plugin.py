@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import pytest
 import logging
+
+import pytest
 from validate.exceptions import ValidationFixtureException
-from validate.strings import VALIDATION_FX_ERROR_MESSAGE
 from validate.function_finder import ValidateFunctionFinder
+from validate.strings import VALIDATION_FX_ERROR_MESSAGE
 
 logger = logging.getLogger("validate")
 
