@@ -8,7 +8,6 @@ logger.add(
     sys.stdout,
     colorize=True,
     format="<green>{time}</green> <level>{message}</level>",
-    backtrace=True,
     enqueue=True,
 )
 new_level = logger.level("functions", no=38, color="<yellow>", icon="🐍")
