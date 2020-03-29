@@ -18,12 +18,12 @@ class FunctionScheduler:
         """
         for functions in self.parallel_functions, self.isolated_functions:
             for function in functions:
-                function()  # dummy for now until implemented!
+                self.execute_function(function)  # dummy for now until implemented!
 
     @logger.catch
-    def execute_function(self) -> None:
+    def execute_function(self, function) -> None:
         """
         Responsible for taking a single function and executing it
         note: this is not responsible for thread management, this is done prior and dispatched to this function
         """
-        pass
+        function()
