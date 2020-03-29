@@ -57,5 +57,13 @@ def test_validate_function_can_be_collected_from_path(testdir):
 
 
 def test_validate_raises(testdir):
+    testdir.makepyfile(
+        """
+        def test_when_raises():
+            pass
+
+    """
+    )
     file_for_raises = get_path_to_test_file("validate_raises.py")
     testdir.runpytest(f"--validate-file={file_for_raises}")
+
