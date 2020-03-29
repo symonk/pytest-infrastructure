@@ -13,6 +13,10 @@ repos:
       - id: check-yaml
       - id: debug-statements
       - id: flake8
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: debug-statements
+      - id: detect-private-key
   - repo: local
     hooks:
       - id: rst
@@ -22,3 +26,7 @@ repos:
         language: python
         additional_dependencies: [pygments, restructuredtext_lint]
         language_version: python3.7
+  - repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: ''
+    hooks:
+      - id: autopep8

@@ -66,4 +66,3 @@ def test_validate_raises(testdir):
     )
     file_for_raises = get_path_to_test_file("validate_raises.py")
     testdir.runpytest(f"--validate-file={file_for_raises}")
-
