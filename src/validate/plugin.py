@@ -5,6 +5,11 @@ from validate.function_finder import ValidateFunctionFinder
 from validate.strings import VALIDATION_FX_ERROR_MESSAGE
 from validate import logger
 
+from src.validate.strings import (
+    VALIDATE_NO_FILE_PATH_OR_NO_FUNCTIONS_FOUND,
+    VALIDATE_XDIST_SLAVE_OR_BYPASS_PROVIDED,
+)
+
 
 def pytest_addoption(parser):
     group = parser.getgroup("validate")
@@ -88,15 +93,8 @@ class PytestValidate:
         )
         logger.info("Pytest-validate is checking if it is allowed to run...")
         if not self.config.getoption("--bypass-validation") or self._is_xdist_slave():
-            logger.info(
-                "Pytest-validate will not be a registered plugin because --bypass-validation was specified on CLI"
-                "or the current invokation of pytest is one of an xdist slave and not the master"
-            )
-            self.config.pluginmanager.unregister(self, self.name)
+            self._unregister(VALIDATE_XDIST_SLAVE_OR_BYPASS_PROVIDED)
         else:
-            logger.info(
-                "Pytest-validate will remain a registered plugin; to disable use --bypass-validation"
-            )
             self.collect_validate_functions()
 
     def collect_validate_functions(self):
@@ -107,11 +105,7 @@ class PytestValidate:
             self.file_path
         ).gather_validate_functions()
         if not self.functions:
-            logger.info(
-                f"File path provided was not specified or the module provided contained no @validate functions"
-                f" as a result of this, pytest-validate will be unregistered from execution"
-            )
-            self.config.pluginmanager.unregister(self, self.name)
+            self._unregister(VALIDATE_NO_FILE_PATH_OR_NO_FUNCTIONS_FOUND)
         else:
             logger.info(
                 f"Pytest-validate found a total of {len(self.functions)} function(s); these are displayed below"
@@ -143,3 +137,7 @@ class PytestValidate:
         :return: a boolean indicating if the current invokation of pytest is on an xdist slave
         """
         return hasattr(self.config, "slaveinput")
+
+    def _unregister(self, reason: str):
+        logger.info(f"pytest-validate will unregister the plugin because: {reason}")
+        self.config.pluginmanager.unregister(self, self.name)
