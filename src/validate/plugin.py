@@ -2,13 +2,13 @@
 import pytest
 from validate.exceptions import ValidationFixtureException
 from validate.function_finder import ValidateFunctionFinder
-from validate.strings import VALIDATION_FX_ERROR_MESSAGE
-from validate import logger
-
-from src.validate.strings import (
+from validate.strings import (
+    VALIDATION_FX_ERROR_MESSAGE,
     VALIDATE_NO_FILE_PATH_OR_NO_FUNCTIONS_FOUND,
     VALIDATE_XDIST_SLAVE_OR_BYPASS_PROVIDED,
 )
+
+from validate import logger
 
 
 def pytest_addoption(parser):
