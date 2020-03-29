@@ -109,6 +109,7 @@ class PytestValidate:
         if not self.functions:
             logger.info(
                 f"File path provided was not specified or the module provided contained no @validate functions"
+                f"as a result of this, pytest-validate will be unregistered from execution"
             )
             self.config.pluginmanager.unregister(self, self.name)
         else:
