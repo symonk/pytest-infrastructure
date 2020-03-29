@@ -39,14 +39,14 @@ outlined below
 Example:
 
 ```python
-from pytest_validate import Validate
+from pytest_validate import validate
 
-@Validate(order=1, enabled=True, only_on_env='staging', thread_safe=True)
+@validate(order=1, enabled=True, only_on_env='staging', thread_safe=True)
 def some_function_to_validate_the_environment():
     pass
 
 
-@Validate(order=2, enabled=True, exclude_on_environments='production', thread_safe=False)
+@validate(order=2, enabled=True, exclude_on_environments='production', thread_safe=False)
 def some_other_function_to_validate_the_stack():
     # This will be run sequentially in isolation (see docs for how order= works with thread_safe=False
     pass
