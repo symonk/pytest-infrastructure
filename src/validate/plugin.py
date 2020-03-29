@@ -120,7 +120,7 @@ class PytestValidate:
 
     @staticmethod
     def _display_function(func):
-        logger.info(f"[{func.__name__}] => {repr(func.meta_data)}")
+        logger.log("functions", f"[{func.__name__}] => {repr(func.meta_data)}")
 
     @logger.catch
     def _go_validate(self, function) -> None:
@@ -129,6 +129,7 @@ class PytestValidate:
         in-line with the meta data of the particular function(s)
         :param function: a function instance - collected by the plugin
         """
+        logger.log("functions", f"pytest-validate is executing: {function.__name__}")
         function()
 
     def _is_xdist_slave(self) -> bool:
