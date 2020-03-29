@@ -1,4 +1,4 @@
-from src.validate.decorators import validate
+from validate import validate
 from validate import logger
 
 

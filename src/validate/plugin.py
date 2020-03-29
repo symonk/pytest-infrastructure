@@ -116,6 +116,7 @@ class PytestValidate:
         if not self.silently:
             for func in self.functions:
                 self._display_function(func)
+                self._go_validate(func)
 
     @staticmethod
     def _display_function(func):
@@ -128,7 +129,7 @@ class PytestValidate:
         in-line with the meta data of the particular function(s)
         :param function: a function instance - collected by the plugin
         """
-        pass
+        function()
 
     def _is_xdist_slave(self) -> bool:
         """

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from testing.testing_utils import get_sample_validate_file
+from testing.testing_utils import get_sample_validate_file, get_path_to_test_file
 
 
 def test_accessing_validation_file_fixture_without_cli_raises(testdir):
@@ -54,3 +54,8 @@ def test_validate_function_can_be_collected_from_path(testdir):
     )
     file_for_arg = get_sample_validate_file()
     testdir.runpytest(f"--validate-file={file_for_arg}")
+
+
+def test_validate_raises(testdir):
+    file_for_raises = get_path_to_test_file("validate_raises.py")
+    testdir.runpytest(f"--validate-file={file_for_raises}")
