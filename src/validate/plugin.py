@@ -10,6 +10,9 @@ from validate.strings import (
 
 from validate import logger
 
+from validate.function_manager import FunctionManager
+from validate.function_scheduler import FunctionScheduler
+
 
 def pytest_addoption(parser):
     group = parser.getgroup("validate")
@@ -78,6 +81,7 @@ class PytestValidate:
         self.functions = None
         self.file_path = self.config.getoption("--validate-file")
         self.silently = config.getoption("--validate-silent")
+        self.environment = config.getoption("--validate-env")
 
     def pytest_configure(self):
         logger.info(
@@ -110,7 +114,7 @@ class PytestValidate:
             logger.info(
                 f"Pytest-validate found a total of {len(self.functions)} function(s); these are displayed below"
             )
-            self._display_detected_functions()
+            self.validate()
 
     def _display_detected_functions(self):
         if not self.silently:
@@ -118,19 +122,15 @@ class PytestValidate:
                 self._display_function(func)
                 self._go_validate(func)
 
-    @staticmethod
-    def _display_function(func):
-        logger.log("functions", f"[{func.__name__}] => {repr(func.meta_data)}")
-
-    @logger.catch
-    def _go_validate(self, function) -> None:
+    def validate(self) -> None:
         """
         This is validates bread and butter; it is responsible for executing the functions in a controlled fashion
         in-line with the meta data of the particular function(s)
-        :param function: a function instance - collected by the plugin
         """
-        logger.log("functions", f"pytest-validate is executing: {function.__name__}")
-        function()
+        manager = FunctionManager(self.functions, self.environment)
+        manager.organize_functions()
+        scheduler = FunctionScheduler(manager.yield_usable_functions())
+        scheduler.begin_workload()
 
     def _is_xdist_slave(self) -> bool:
         """
