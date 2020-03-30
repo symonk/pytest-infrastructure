@@ -116,12 +116,6 @@ class PytestValidate:
             )
             self.validate()
 
-    def _display_detected_functions(self):
-        if not self.silently:
-            for func in self.functions:
-                self._display_function(func)
-                self._go_validate(func)
-
     def validate(self) -> None:
         """
         This is validates bread and butter; it is responsible for executing the functions in a controlled fashion
