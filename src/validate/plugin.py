@@ -96,7 +96,11 @@ class PytestValidate:
         **********************************************************************"""
         )
         logger.info("Pytest-validate is checking if it is allowed to run...")
-        if not self.config.getoption("--bypass-validation") or self._is_xdist_slave():
+        if (
+            not self.config.getoption("--bypass-validation")
+            or self._is_xdist_slave()
+            or self.config.getoption("--collect-only")
+        ):
             self._unregister(VALIDATE_XDIST_SLAVE_OR_BYPASS_PROVIDED)
         else:
             self.collect_validate_functions()
