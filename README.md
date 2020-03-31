@@ -4,7 +4,7 @@
   <p></p>
 
 [![Build Status](https://api.travis-ci.org/symonk/pytest-validate.svg?branch=master)](https://travis-ci.org/symonk/pytest-validate)
-[![License Apache](https://img.shields.io/badge/license-Apache%202-brightgreen.svg)](https://github.com/symonk/pytest-validate/blob/master/LICENSE)
+[![License Apache](https://img.shields.io/badge/license-Apache%202-brightgreen.svg)](https://github.com/symonk/pytest-infrastructure/blob/master/LICENSE)
 [![code coverage](https://codecov.io/gh/symonk/pytest-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/symonk/pytest-validate)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=symonk_pytest-validate&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=symonk_pytest-validate)
 [![Find_Me LinkedIn](https://img.shields.io/badge/Find_Me-LinkedIn-brightgreen.svg)](https://www.linkedin.com/in/simonk09/)
