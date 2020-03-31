@@ -45,8 +45,8 @@ class FunctionManager:
     @staticmethod
     def _strip_meta_data_from_function(function) -> Tuple:
         """
-        Strip the meta data from our validate functions, presenting it an an un-packable format for easy use
-        :param function: the validate decorated function to retrieve meta data from
+        Strip the meta data from our infrastructure functions, presenting it an an un-packable format for easy use
+        :param function: the infrastructure decorated function to retrieve meta data from
         :return: a tuple of the meta data
         """
         return (

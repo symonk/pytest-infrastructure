@@ -1,6 +1,6 @@
 from sys import stdout
-from validate._version import version as __version__
-from validate.decorators import validate
+from infrastructure._version import version as __version__
+from infrastructure.decorators import validate
 from loguru import logger
 
 logger.add(stdout, colorize=True, enqueue=True, backtrace=True)

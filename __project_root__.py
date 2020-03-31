@@ -17,4 +17,4 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import os
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # pytest-validate root dir
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # pytest-infrastructure root dir

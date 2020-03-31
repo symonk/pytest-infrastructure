@@ -1,26 +1,26 @@
 # -*- coding: utf-8 -*-
 import pytest
-from validate.exceptions import ValidationFixtureException
-from validate.function_finder import ValidateFunctionFinder
-from validate.strings import (
+from infrastructure.exceptions import ValidationFixtureException
+from infrastructure.function_finder import ValidateFunctionFinder
+from infrastructure.strings import (
     VALIDATION_FX_ERROR_MESSAGE,
     VALIDATE_NO_FILE_PATH_OR_NO_FUNCTIONS_FOUND,
     VALIDATE_XDIST_SLAVE_OR_BYPASS_PROVIDED,
 )
 
-from validate import logger
+from infrastructure import logger
 
-from validate.function_manager import FunctionManager
-from validate.function_scheduler import FunctionScheduler
+from infrastructure.function_manager import FunctionManager
+from infrastructure.function_scheduler import FunctionScheduler
 
 
 def pytest_addoption(parser):
-    group = parser.getgroup("validate")
+    group = parser.getgroup("infrastructure")
     group.addoption(
-        "--validate-file",
+        "--infrastructure-file",
         action="store",
         default=None,
-        help="File path to your .py file which contains validate functions",
+        help="File path to your .py file which contains infrastructure functions",
     )
     group.addoption(
         "--bypass-validation",
@@ -28,24 +28,23 @@ def pytest_addoption(parser):
         help="Bypass the validation functions and execute testing without checking, disable the plugin completely",
     )
     group.addoption(
-        "--validate-thread-count",
+        "--infrastructure-thread-count",
         action="store",
         type=int,
         default=0,
-        help="If specified will use threads to execute validate threads in parallel",
+        help="If specified will use threads to execute infrastructure threads in parallel",
     )
     group.addoption(
-        "--validate-silent",
+        "--infrastructure-silent",
         action="store_true",
-        help="Supress stdout message(s) from pytest validate",
+        help="Supress stdout message(s) from pytest infrastructure",
     )
     group.addoption(
-        "--validate-env",
+        "--infrastructure-env",
         action="store",
         type=str,
-        default="",
         help="Runtime environment; only_on_env= of validation functions will account for this"
-        "Note: if not specified, all validate functions will be executed.",
+        "Note: if not specified, all infrastructure functions will be executed.",
     )
 
 
@@ -62,7 +61,7 @@ def validation_file(request):
     :param request: the dependency injected pytest request fixture
     :return: Optional[FileLike]
     """
-    validation_file = request.config.getoption("--validate-file")
+    validation_file = request.config.getoption("--infrastructure-file")
     if validation_file:
         return validation_file
     else:
@@ -71,17 +70,17 @@ def validation_file(request):
 
 class PytestValidate:
     """
-    The pytest validate plugin object;
-    This plugin is only registered if the --bypass-validate arg is not provided, else it is completely skipped!
+    The pytest infrastructure plugin object;
+    This plugin is only registered if the --bypass-infrastructure arg is not provided, else it is completely skipped!
     """
 
     def __init__(self, config):
         self.config = config
-        self.name = "pytest_validate"
+        self.name = "pytest_infrastructure"
         self.functions = None
-        self.file_path = self.config.getoption("--validate-file")
-        self.silently = config.getoption("--validate-silent")
-        self.environment = config.getoption("--validate-env")
+        self.file_path = self.config.getoption("--infrastructure-file")
+        self.silently = config.getoption("--infrastructure-silent")
+        self.environment = config.getoption("--infrastructure-env")
 
     def pytest_configure(self):
         logger.info(
@@ -95,7 +94,7 @@ class PytestValidate:
                 |___/
         **********************************************************************"""
         )
-        logger.info("Pytest-validate is checking if it is allowed to run...")
+        logger.info("Pytest-infrastructure is checking if it is allowed to run...")
         if (
             not self.config.getoption("--bypass-validation")
             or self._is_xdist_slave()
@@ -107,7 +106,7 @@ class PytestValidate:
 
     def collect_validate_functions(self):
         logger.info(
-            f"Pytest-validate is scanning for @validate functions in {self.file_path}"
+            f"Pytest-infrastructure is scanning for @infrastructure functions in {self.file_path}"
         )
         self.functions = ValidateFunctionFinder(
             self.file_path
@@ -116,7 +115,7 @@ class PytestValidate:
             self._unregister(VALIDATE_NO_FILE_PATH_OR_NO_FUNCTIONS_FOUND)
         else:
             logger.info(
-                f"Pytest-validate found a total of {len(self.functions)} function(s); these are displayed below"
+                f"Pytest-infrastructure found a total of {len(self.functions)} function(s); these are displayed below"
             )
             self.validate()
 
@@ -139,5 +138,7 @@ class PytestValidate:
         return hasattr(self.config, "slaveinput")
 
     def _unregister(self, reason: str):
-        logger.info(f"pytest-validate will unregister the plugin because: {reason}")
+        logger.info(
+            f"pytest-infrastructure will unregister the plugin because: {reason}"
+        )
         self.config.pluginmanager.unregister(self, self.name)

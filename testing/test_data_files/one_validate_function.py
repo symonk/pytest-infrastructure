@@ -4,4 +4,4 @@ from validate import logger
 
 @validate()
 def validate_function_one():
-    logger.info("executing the validate function")
+    logger.info("executing the infrastructure function")

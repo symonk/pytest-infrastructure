@@ -1,9 +1,9 @@
-from validate import logger
+from infrastructure import logger
 
 
 class FunctionScheduler:
     """
-    This class is responsible for the actual execution of the validate functions
+    This class is responsible for the actual execution of the infrastructure functions
     including the threaded-ness of such execution.  Internals of this class are to be scoped out
     and we have various edge cases to both identify and test
     """

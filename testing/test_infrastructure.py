@@ -16,7 +16,7 @@ def test_accessing_validation_file_fixture_without_cli_raises(testdir):
 
 def test_plugin_is_registered_without_bypass_flag(testdir, request):
     plugin_manager = request.config.pluginmanager
-    assert plugin_manager.is_registered(plugin_manager.get_plugin("validate"))
+    assert plugin_manager.is_registered(plugin_manager.get_plugin("infrastructure"))
 
 
 def test_plugin_is_not_registered_with_bypass_flag(testdir):
@@ -41,7 +41,7 @@ def test_validation_fixture_is_passed_through(testdir, valid_file_one_func):
             assert validation_file == get_sample_validate_file()
         """
     )
-    assert testdir.runpytest(f"--validate-file={valid_file_one_func}").ret == 0
+    assert testdir.runpytest(f"--infrastructure-file={valid_file_one_func}").ret == 0
 
 
 def test_validate_function_can_be_collected_from_path(testdir):
@@ -53,7 +53,7 @@ def test_validate_function_can_be_collected_from_path(testdir):
     """
     )
     file_for_arg = get_sample_validate_file()
-    testdir.runpytest(f"--validate-file={file_for_arg}")
+    testdir.runpytest(f"--infrastructure-file={file_for_arg}")
 
 
 def test_validate_raises(testdir):
@@ -65,4 +65,4 @@ def test_validate_raises(testdir):
     """
     )
     file_for_raises = get_path_to_test_file("validate_raises.py")
-    testdir.runpytest(f"--validate-file={file_for_raises}")
+    testdir.runpytest(f"--infrastructure-file={file_for_raises}")
