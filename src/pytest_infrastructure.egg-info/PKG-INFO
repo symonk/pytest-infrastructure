@@ -1,6 +1,6 @@
 Metadata-Version: 1.2
 Name: pytest-infrastructure
-Version: 0.1.dev94+ga2964f5.d20200331
+Version: 0.1.dev95+g505ba94
 Summary: pytest stack validation prior to testing executing
 Home-page: https://github.com/symonk/pytest-infrastructure
 Author: Simon Kerr

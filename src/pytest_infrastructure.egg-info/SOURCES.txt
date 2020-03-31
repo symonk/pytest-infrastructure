@@ -16,6 +16,7 @@ tox.ini
 .github/HOWTORELEASE.rst
 .github/ISSUES.txt
 .github/PULL_REQUEST_TEMPLATE.md.py
+.github/.images/pytest_infrastructure.png
 docs/Makefile
 docs/conf.py
 docs/index.rst
@@ -38,6 +39,7 @@ src/pytest_infrastructure.egg-info/requires.txt
 src/pytest_infrastructure.egg-info/top_level.txt
 testing/__init__.py
 testing/conftest.py
+testing/test_infrastructure.py
 testing/testing_utils.py
 testing/test_data_files/one_validate_function.py
 testing/test_data_files/validate_raises.py
