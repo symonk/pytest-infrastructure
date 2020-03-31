@@ -1,4 +1,4 @@
-from validate import validate
+from infrastructure import validate
 
 
 @validate()
