@@ -22,8 +22,8 @@ include/
 lib/
 bin/
 env/
-src/validate/_version.py*
-pytest_validate.egg-info
+src/infrastructure/_version.py*
+pytest_infrastructure.egg-info
 issue/
 3rdparty/
 pytestdebug.log
