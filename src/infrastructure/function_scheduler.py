@@ -1,3 +1,7 @@
+from concurrent.futures.thread import ThreadPoolExecutor
+from threading import current_thread
+from typing import Any
+
 from infrastructure import logger
 
 
@@ -16,14 +20,28 @@ class FunctionScheduler:
         Entry point for the scheduler to begin doing its work, here it will manage execution keeping track of
         exceptions and smartly managing both thread safe parallel and isolated runs
         """
-        for functions in self.parallel_functions, self.isolated_functions:
-            for function in functions:
-                self.execute_function(function)  # dummy for now until implemented!
+        if self.isolated_functions:
+            logger.info(
+                f"pytest-infrastructure is executing sequential non thread-safe functions now..."
+            )
+        for function in self.isolated_functions:
+            function()
+
+        if self.parallel_functions:
+            logger.info(
+                f"pytest-infrastructure is executing parallel thread-safe functions now"
+            )
+        for function in self.parallel_functions:
+            with ThreadPoolExecutor() as executor:
+                futures = [executor.submit(self.execute_function, function)]
+                logger.info(futures)
 
     @logger.catch
-    def execute_function(self, function) -> None:
+    def execute_function(self, function) -> Any:
         """
         Responsible for taking a single function and executing it
         note: this is not responsible for thread management, this is done prior and dispatched to this function
         """
-        function()
+        current_thread().name = f"{function.__name__}"
+        logger.info(f"Executing {function.meta_data}")
+        return function()
