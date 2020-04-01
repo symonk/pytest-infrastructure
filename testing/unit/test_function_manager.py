@@ -1,4 +1,3 @@
-import types
 from infrastructure import infrastructure
 from infrastructure.function_manager import FunctionManager
 
