@@ -1,3 +1,4 @@
+import types
 from infrastructure import infrastructure
 from infrastructure.function_manager import FunctionManager
 
@@ -13,16 +14,16 @@ def build_dummy(
     only_on_env: str = None,
     isolated: bool = None,
 ):
-    d = dummy
+    fx = dummy
     if order is not None:
-        dummy.meta_data.order = order
+        fx.meta_data.order = order
     if enabled is not None:
-        dummy.meta_data.enabled = enabled
+        fx.meta_data.enabled = enabled
     if only_on_env is not None:
-        dummy.meta_data.only_on_env = only_on_env
+        fx.meta_data.only_on_env = only_on_env
     if isolated is not None:
-        dummy.meta_data.isolated = isolated
-    return d
+        fx.meta_data.isolated = isolated
+    return fx
 
 
 def test_non_isolated_does_not_order_rewrite():
@@ -35,3 +36,15 @@ def test_negative_rewriting_isolated():
     fm = FunctionManager([build_dummy(order=-100, isolated=True)])
     fm.organize_functions()
     assert fm.isolated_functions[0].meta_data.order == 0
+
+
+def test_ordering_is_correct():
+    fm = FunctionManager(
+        [
+            build_dummy(order=-1, isolated=True),
+            build_dummy(order=1, isolated=True),
+            build_dummy(order=3, isolated=True),
+        ]
+    )
+    fm.organize_functions()
+    # TODO figure out how to stop all functions being the same reference!

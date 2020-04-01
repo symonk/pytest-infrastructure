@@ -37,20 +37,20 @@ outlined below
 
 ### The contract of @infrastructure
     - **Ordering**: isolated=True functions care **NOT** for ordering.
-    - **Ordering**: functions without order= or explicitly setting order less than 1 will be execute **last**.
+    - **Ordering**: functions without order= or explicitly setting order less than 0 will be execute **first**.
 
 ### Simple Example :hearts:
 Example:
 
 ```python
-from pytest_validate import validate
+from pytest_validate import infrastructure
 
-@validate(order=1, enabled=True, only_on_env='staging', thread_safe=True)
+@infrastructure(order=1, enabled=True, only_on_env='staging', thread_safe=True)
 def some_function_to_validate_the_environment():
     pass
 
 
-@validate(order=2, enabled=True, exclude_on_environments='production', thread_safe=False)
+@infrastructure(order=2, enabled=True, exclude_on_environments='production', thread_safe=False)
 def some_other_function_to_validate_the_stack():
     # This will be run sequentially in isolation (see docs for how order= works with thread_safe=False
     pass

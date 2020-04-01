@@ -8,7 +8,7 @@ class InfrastructureMeta:
     validate: bool = True
     order: int = 0
     enabled: bool = True
-    only_on_env: List = None
+    only_on_env: str = None
     isolated: bool = False
     name: str = None
 
@@ -16,7 +16,7 @@ class InfrastructureMeta:
 def infrastructure(
     order: int = 0,
     enabled: bool = True,
-    only_on_env: List = None,
+    only_on_env: str = None,
     isolated: bool = False,
 ):
     def real_decorator(func):
