@@ -1,7 +1,7 @@
 import sys
 
 from infrastructure._version import version as __version__
-from infrastructure.decorators import validate
+from infrastructure.decorators import infrastructure
 from loguru import logger
 
 logger.remove()
@@ -15,4 +15,4 @@ logger.add(
 new_level = logger.level("functions", no=38, color="<yellow>", icon="🐍")
 
 
-__all__ = ["__version__", validate, logger]
+__all__ = ["__version__", infrastructure, logger]

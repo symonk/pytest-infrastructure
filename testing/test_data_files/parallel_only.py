@@ -1,16 +1,16 @@
-from infrastructure import validate
+from infrastructure import infrastructure
 
 
-@validate(isolated=False)
+@infrastructure(isolated=False)
 def do_one():
     pass
 
 
-@validate(isolated=False)
+@infrastructure(isolated=False)
 def do_two():
     pass
 
 
-@validate(isolated=False)
+@infrastructure(isolated=False)
 def do_three():
     pass

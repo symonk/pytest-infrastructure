@@ -1,6 +1,6 @@
-from infrastructure import validate
+from infrastructure import infrastructure
 
 
-@validate()
+@infrastructure()
 def validate_function_one():
     pass

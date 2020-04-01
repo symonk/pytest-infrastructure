@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 
 @dataclass(repr=True)
-class ValidateMeta:
+class InfrastructureMeta:
     validate: bool = True
     order: int = 0
     enabled: bool = True
@@ -13,14 +13,14 @@ class ValidateMeta:
     name: str = None
 
 
-def validate(
+def infrastructure(
     order: int = 0,
     enabled: bool = True,
     only_on_env: List = None,
     isolated: bool = False,
 ):
     def real_decorator(func):
-        func.meta_data = ValidateMeta(
+        func.meta_data = InfrastructureMeta(
             order=order,
             enabled=enabled,
             only_on_env=only_on_env,
