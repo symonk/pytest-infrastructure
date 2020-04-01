@@ -30,8 +30,8 @@ class FunctionManager:
         Remove any functions from self.isolated_functions where the function meta data does not match a specified env
         """
         (self.parallel_functions, self.isolated_functions) = (
-            self.raw_functions,
-            self.raw_functions,
+            [func for func in self.raw_functions if not func.meta_data.isolated],
+            [func for func in self.raw_functions if func.meta_data.isolated],
         )  # dummy for now until implemented
 
     def _order_usable_functions(self):

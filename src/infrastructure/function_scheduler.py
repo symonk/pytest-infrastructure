@@ -25,15 +25,17 @@ class FunctionScheduler:
                 f"pytest-infrastructure is executing sequential non thread-safe functions now..."
             )
         for function in self.isolated_functions:
-            function()
+            self.execute_function(function)
 
         if self.parallel_functions:
             logger.info(
                 f"pytest-infrastructure is executing parallel thread-safe functions now"
             )
-        for function in self.parallel_functions:
             with ThreadPoolExecutor() as executor:
-                futures = [executor.submit(self.execute_function, function)]
+                futures = [
+                    executor.submit(self.execute_function, fx)
+                    for fx in self.parallel_functions
+                ]
                 logger.info(futures)
 
     @logger.catch
@@ -42,6 +44,6 @@ class FunctionScheduler:
         Responsible for taking a single function and executing it
         note: this is not responsible for thread management, this is done prior and dispatched to this function
         """
-        current_thread().name = f"{function.__name__}"
-        logger.info(f"Executing {function.meta_data}")
+        current_thread().name = f"{function.meta_data.name}"
+        logger.info(f"Executing {function.meta_data.name}")
         return function()

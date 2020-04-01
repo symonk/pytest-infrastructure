@@ -10,6 +10,7 @@ class ValidateMeta:
     enabled: bool = True
     only_on_env: List = None
     isolated: bool = False
+    name: str = None
 
 
 def validate(
@@ -20,7 +21,11 @@ def validate(
 ):
     def real_decorator(func):
         func.meta_data = ValidateMeta(
-            order=order, enabled=enabled, only_on_env=only_on_env, isolated=isolated
+            order=order,
+            enabled=enabled,
+            only_on_env=only_on_env,
+            isolated=isolated,
+            name=func.__name__,
         )
 
         @wraps(func)
