@@ -1,4 +1,5 @@
 from typing import Tuple
+from infrastructure import logger
 
 
 class FunctionManager:
@@ -40,7 +41,22 @@ class FunctionManager:
         note: functions decorated with thread_safe=True will NOT account for ordering as by nature they are
         all ran together
         """
-        self.isolated_functions.sort()
+        breakpoint()
+        if self.isolated_functions:
+            logger.info(
+                f"current order of functions collected is {[fx.order for fx in self.isolated_functions]}"
+                f"pytest-infrastructure is applying execution order now...."
+            )
+            self.isolated_functions.sort(
+                key=lambda func_dataclass: func_dataclass.order
+            )
+            logger.info(
+                f"functions have been sorted, execution for isolated functions is as follows:"
+            )
+            for fx in self.isolated_functions:
+                logger.info(
+                    f"order => {fx.meta_data.order} ~ function => {fx.meta_data.name}"
+                )
 
     @staticmethod
     def _strip_meta_data_from_function(function) -> Tuple:
