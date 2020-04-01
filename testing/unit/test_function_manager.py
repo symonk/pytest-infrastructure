@@ -7,18 +7,31 @@ def dummy():
     pass
 
 
+def build_dummy(
+    order: int = None,
+    enabled: bool = None,
+    only_on_env: str = None,
+    isolated: bool = None,
+):
+    d = dummy
+    if order is not None:
+        dummy.meta_data.order = order
+    if enabled is not None:
+        dummy.meta_data.enabled = enabled
+    if only_on_env is not None:
+        dummy.meta_data.only_on_env = only_on_env
+    if isolated is not None:
+        dummy.meta_data.isolated = isolated
+    return d
+
+
 def test_non_isolated_does_not_order_rewrite():
-    dummy_func = dummy
-    dummy.meta_data.order = -100
-    fm = FunctionManager([dummy_func])
+    fm = FunctionManager([build_dummy(order=-100)])
     fm.organize_functions()
     assert fm.parallel_functions[0].meta_data.order == -100
 
 
 def test_negative_rewriting_isolated():
-    dummy_func = dummy
-    dummy.meta_data.order = -100
-    dummy.meta_data.isolated = True
-    fm = FunctionManager([dummy_func])
+    fm = FunctionManager([build_dummy(order=-100, isolated=True)])
     fm.organize_functions()
     assert fm.isolated_functions[0].meta_data.order == 0
