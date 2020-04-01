@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List, Optional
 from infrastructure import logger
 
 
@@ -10,11 +10,11 @@ class FunctionManager:
     what order should they be in?
     """
 
-    def __init__(self, functions, environment):
-        self.raw_functions = functions
-        self.environment = environment
-        self.parallel_functions = None
-        self.isolated_functions = None
+    def __init__(self, functions: List, environment: str = ""):
+        self.raw_functions: List = functions
+        self.environment: str = environment
+        self.parallel_functions: Optional[List] = None
+        self.isolated_functions: Optional[List] = None
 
     def organize_functions(self):
         """
@@ -41,14 +41,18 @@ class FunctionManager:
         note: functions decorated with thread_safe=True will NOT account for ordering as by nature they are
         all ran together
         """
-        breakpoint()
         if self.isolated_functions:
+            logger.info(f"reshuffling order to detect any negatively ordered functions")
+            for fx in self.isolated_functions:
+                if fx.meta_data.order < 0:
+                    fx.meta_data.order = 0
+
             logger.info(
-                f"current order of functions collected is {[fx.order for fx in self.isolated_functions]}"
+                f"current order of functions collected is {[fx.meta_data.order for fx in self.isolated_functions]}"
                 f"pytest-infrastructure is applying execution order now...."
             )
             self.isolated_functions.sort(
-                key=lambda func_dataclass: func_dataclass.order
+                key=lambda func_dataclass: func_dataclass.meta_data.order
             )
             logger.info(
                 f"functions have been sorted, execution for isolated functions is as follows:"
