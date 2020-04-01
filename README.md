@@ -10,30 +10,34 @@
 [![Find_Me LinkedIn](https://img.shields.io/badge/Find_Me-LinkedIn-brightgreen.svg)](https://www.linkedin.com/in/simonk09/)
 [![Find_Me Slack](https://img.shields.io/badge/Find_Me-Slack-brightgreen.svg)](https://testersio.slack.com)
 
-## What is pytest-validate? :flags:
-Pytest-validate is a plugin for pytest that given a python module containing a list of adhering validate functions will
+## What is pytest-infrastructure? :flags:
+Pytest-infrastructure is a plugin for pytest that given a python module containing a list of adhering validate functions will
 ensure the stack under test or runtime environment is as you expect before wasting time running test(s).  How it works is
 outlined below
 
-**pytest-validate Goals:**
+**pytest-infrastructure Goals:**
  - Quickly validate a test environment or general runtime environment against X functions
  - Create an easy way for user-defined functions to be loaded and evaluated at runtime
  - When failure(s) occur provide powerful means of configuration and sensible error messages
  - Work natively with xdist enabled (as that is very common)
 
 #### Important Notes:
- - pytest-validate does **not!** support python version(s) earlier than 3.7 officially
- - pytest-validate is open to pull requests that bring in backwards compatability but it is not a priority now
+ - pytest-infrastructure does **not!** support python version(s) earlier than 3.7 officially
+ - pytest-infrastructure is open to pull requests that bring in backwards compatability but it is not a priority now
 
 
  ---
 
  ### How It Works:
-  - Create your @validate decorated functions in your own custom module.py
+  - Create your @infrastructure decorated functions in your own custom module.py
   - Pass the file path to your module through --validation-file=path
-  - pytest-validate will automatically scan and execute your functions before running any tests
+  - pytest-infrastructure will automatically scan and execute your functions before running any tests
 
 ---
+
+### The contract of @infrastructure
+    - **Ordering**: isolated=True functions care **NOT** for ordering.
+    - **Ordering**: functions without order= or explicitly setting order less than 1 will be execute **last**.
 
 ### Simple Example :hearts:
 Example:
@@ -54,14 +58,14 @@ def some_other_function_to_validate_the_stack():
 
 ---
 
-### How to Contribute to pytest-validate :rocket:
-Thanks for considering contributions to the pytest-validate plugin.  To help you get started please read the following documentation.  All contributions will be strongly considered and I welcome contributions from anyone, experienced or new; the pytest ecosystem can be very confusing at first glance so if you have any questions or think you are doing something wrong, please open a PR with what you have and we can pair up on it.
+### How to Contribute to pytest-infrastructure :rocket:
+Thanks for considering contributions to the pytest-infrastructure plugin.  To help you get started please read the following documentation.  All contributions will be strongly considered and I welcome contributions from anyone, experienced or new; the pytest ecosystem can be very confusing at first glance so if you have any questions or think you are doing something wrong, please open a PR with what you have and we can pair up on it.
 
  - Easier or small contributions are or will be attached to the: `easier` issue label
 
 #### Getting started :rocket:
 
-- Clone the repository using: `git@github.com:username/pytest-validate.git (ssh recommended over HTTPS)`
+- Clone the repository using: `git@github.com:username/pytest-infrastructure.git (ssh recommended over HTTPS)`
 - Open the cloned folder in your IDE of choice, I would recommend `Pycharm` (or if you are hardcore and dont use an IDE)
 - Create a branch or if you prefer to work on forks do that
 - Push change(s) for issue/tickets you wish to solve

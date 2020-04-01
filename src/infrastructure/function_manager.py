@@ -40,7 +40,7 @@ class FunctionManager:
         note: functions decorated with thread_safe=True will NOT account for ordering as by nature they are
         all ran together
         """
-        pass
+        self.isolated_functions.sort()
 
     @staticmethod
     def _strip_meta_data_from_function(function) -> Tuple:
