@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 from infrastructure.exceptions import ValidationFixtureException
-from infrastructure.function_finder import ValidateFunctionFinder
+from infrastructure.function_finder import InfrastructureFunctionFinder
 from infrastructure.strings import (
     VALIDATION_FX_ERROR_MESSAGE,
     VALIDATE_NO_FILE_PATH_OR_NO_FUNCTIONS_FOUND,
@@ -104,9 +104,9 @@ class PytestValidate:
         logger.info(
             f"Pytest-infrastructure is scanning for @infrastructure functions in {self.file_path}"
         )
-        self.unfiltered_functions = ValidateFunctionFinder(
+        self.unfiltered_functions = InfrastructureFunctionFinder(
             self.file_path
-        ).gather_validate_functions()
+        ).gather_infrastructure_functions()
         if not self.unfiltered_functions:
             self._unregister(VALIDATE_NO_FILE_PATH_OR_NO_FUNCTIONS_FOUND)
         else:

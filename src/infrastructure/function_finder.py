@@ -4,11 +4,11 @@ from inspect import getmembers
 from typing import List, Callable
 
 
-class ValidateFunctionFinder:
+class InfrastructureFunctionFinder:
     def __init__(self, path: os.PathLike):
         self.path = path
 
-    def gather_validate_functions(self) -> List[Callable]:
+    def gather_infrastructure_functions(self) -> List[Callable]:
         validation_functions = []
         if self.path:
             spec = util.spec_from_file_location("validation_functions", self.path)
