@@ -32,7 +32,7 @@ def pytest_addoption(parser):
         "--infrastructure-thread-count",
         action="store",
         type=int,
-        default=0,
+        default=2,
         help="If specified will use threads to execute infrastructure threads in parallel",
     )
     group.addoption(
@@ -76,6 +76,7 @@ class PytestValidate:
         self.unfiltered_functions = None
         self.file_path = self.config.getoption("--infrastructure-file")
         self.environment = config.getoption("--infrastructure-env")
+        self.thread_count = config.getoption("--infrastructure-thread-count")
 
     def pytest_configure(self):
         logger.info(
@@ -118,7 +119,9 @@ class PytestValidate:
         """
         manager = FunctionManager(self.unfiltered_functions, self.environment)
         manager.organize_functions()
-        scheduler = FunctionScheduler(manager.yield_usable_functions())
+        scheduler = FunctionScheduler(
+            manager.yield_usable_functions(), self.thread_count
+        )
         scheduler.begin_workload()
 
     def _is_xdist_slave(self) -> bool:

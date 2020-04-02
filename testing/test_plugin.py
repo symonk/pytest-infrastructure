@@ -66,3 +66,25 @@ def test_validate_raises(testdir):
     )
     file_for_raises = get_path_to_test_file("validate_raises.py")
     testdir.runpytest(f"--infrastructure-file={file_for_raises}")
+
+
+def test_thread_count_default(testdir):
+    testdir.makepyfile(
+        """
+        def test_when_raises(request):
+            assert request.config.getoption('--infrastructure-thread-count') == 2
+
+    """
+    )
+    assert testdir.runpytest().ret == 0
+
+
+def test_thread_count_override(testdir):
+    testdir.makepyfile(
+        """
+        def test_when_raises(request):
+            assert request.config.getoption('--infrastructure-thread-count') == 10
+
+    """
+    )
+    assert testdir.runpytest("--infrastructure-thread-count=10").ret == 0

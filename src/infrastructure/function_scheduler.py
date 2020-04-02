@@ -12,7 +12,8 @@ class FunctionScheduler:
     and we have various edge cases to both identify and test
     """
 
-    def __init__(self, executable_functions):
+    def __init__(self, executable_functions, thread_count):
+        self.thread_count = thread_count
         self.parallel_functions, self.isolated_functions = executable_functions
 
     def begin_workload(self) -> None:
