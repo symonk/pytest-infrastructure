@@ -2,7 +2,7 @@ import sys
 
 from infrastructure._version import version as __version__
 from infrastructure.strings import PLUGIN_NAME
-from infrastructure.decorators import infrastructure, InfrastructureMeta
+from infrastructure import decorators
 from loguru import logger
 
 config = {
@@ -21,4 +21,4 @@ logger.configure(**config)
 logger.enable(PLUGIN_NAME)
 
 
-__all__ = ["__version__", infrastructure, logger, InfrastructureMeta]
+__all__ = ["__version__", decorators.infrastructure, logger, decorators.InfrastructureMeta]
