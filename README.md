@@ -17,13 +17,11 @@ outlined below
 
 **pytest-infrastructure; How it works:**
 
-    ```python
     write your own python module containing functions decorated by the @infrastructure decorator
     pass the path to your file to pytest via --infrastructure-file=~./path/of/file.py
     pytest-infrastructure will do the rest, ensuring the runtime environment is adaquate to carry out the test run
     if it is not, pytest-infrastructure aims to be clean and concise in telling you why it failed
     @infrastructure is fully loaded with capabilities; supports parallelism and supports xdist
-    ```
 
 ---
 
