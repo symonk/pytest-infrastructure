@@ -7,7 +7,7 @@ python: 3.7
 install:
   - pip install tox-travis
 script:
-  - tox -- --cov=./
+  - tox -- --cov=./ -p 10
   - sonar-scanner
 after_success:
   - codecov
