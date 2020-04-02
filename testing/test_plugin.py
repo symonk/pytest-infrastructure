@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from testing.testing_utils import get_sample_validate_file, get_path_to_test_file
 
-
 def test_accessing_validation_file_fixture_without_cli_raises(testdir):
     testdir.makepyfile(
         """
