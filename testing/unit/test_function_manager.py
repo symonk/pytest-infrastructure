@@ -1,21 +1,21 @@
-from infrastructure.function_manager import FunctionManager
+from infrastructure import function_manager as fmgr
 from testing.testing_utils import build_dummy
 
 
 def test_non_isolated_does_not_order_rewrite():
-    fm = FunctionManager([build_dummy(order=-100)])
+    fm = fmgr.FunctionManager([build_dummy(order=-100)])
     fm.organize_functions()
     assert fm.parallel_functions[0].meta_data.order == -100
 
 
 def test_negative_rewriting_isolated():
-    fm = FunctionManager([build_dummy(order=-100, isolated=True)])
+    fm = fmgr.FunctionManager([build_dummy(order=-100, isolated=True)])
     fm.organize_functions()
     assert fm.isolated_functions[0].meta_data.order == 0
 
 
 def test_ordering_is_correct():
-    fm = FunctionManager(
+    fm = fmgr.FunctionManager(
         [
             build_dummy(order=-1, isolated=True),
             build_dummy(order=1, isolated=True),
@@ -36,7 +36,7 @@ def test_disabled_functions_are_removed():
         build_dummy(order=-1000),
         build_dummy(order=-1000, isolated=True),
     )
-    fm = FunctionManager([f1, f2, f3, f4, f5], environment="not-staging")
+    fm = fmgr.FunctionManager([f1, f2, f3, f4, f5], environment="not-staging")
     fm.organize_functions()
     assert len(fm.disabled_functions) == 3
     assert fm.disabled_functions[0] == f1
