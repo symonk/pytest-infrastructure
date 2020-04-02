@@ -11,27 +11,23 @@
 [![Find_Me Slack](https://img.shields.io/badge/Find_Me-Slack-brightgreen.svg)](https://testersio.slack.com)
 
 ## What is pytest-infrastructure? :flags:
-Pytest-infrastructure is a plugin for pytest that given a python module containing a list of adhering validate functions will
+Pytest-infrastructure is a plugin for pytest that given a python module containing a list of adhering @infrastructure decorated functions will
 ensure the stack under test or runtime environment is as you expect before wasting time running test(s).  How it works is
 outlined below
 
-**pytest-infrastructure Goals:**
- - Quickly validate a test environment or general runtime environment against X functions
- - Create an easy way for user-defined functions to be loaded and evaluated at runtime
- - When failure(s) occur provide powerful means of configuration and sensible error messages
- - Work natively with xdist enabled (as that is very common)
+**pytest-infrastructure; How it works:**
+    ```
+    write your own python module containing functions decorated by the @infrastructure decorator
+    pass the path to your file to pytest via --infrastructure-file=~./path/of/file.py
+    pytest-infrastructure will do the rest, ensuring the runtime environment is adaquate to carry out the test run
+    if it is not, pytest-infrastructure aims to be clean and concise in telling you why it failed
+    @infrastructure is fully loaded with capabilities; supports parallelism and supports xdist
+
+---
 
 #### Important Notes:
- - pytest-infrastructure does **not!** support python version(s) earlier than 3.7 officially
+ - pytest-infrastructure does **not!** support python version(s) earlier than 3 officially
  - pytest-infrastructure is open to pull requests that bring in backwards compatability but it is not a priority now
-
-
- ---
-
- ### How It Works:
-  - Create your @infrastructure decorated functions in your own custom module.py
-  - Pass the file path to your module through --validation-file=path
-  - pytest-infrastructure will automatically scan and execute your functions before running any tests
 
 ---
 
@@ -41,14 +37,15 @@ Example:
 ```python
 from pytest_infrastructure import infrastructure
 
-@infrastructure(order=1, enabled=True, not_on_env='staging', thread_safe=True)
+@infrastructure(order=1, enabled=True, not_on_env='staging', isolated=True)
 def some_function_to_validate_the_environment():
-    pass
+    # This will be run in parallel; order plays no part when isolated=True is set
+    # This will be executed first, order=1 (n.b => order 0 is considered priority and negative order is equal to 0
 
 
-@infrastructure(order=2, enabled=True, exclude_on_environments='production', thread_safe=False)
+@infrastructure(enabled=True, exclude_on_environments='production', isolated=False)
 def some_other_function_to_validate_the_stack():
-    # This will be run sequentially in isolation (see docs for how order= works with thread_safe=False
+    # This will be run sequentially in parallel
     pass
 ```
 
