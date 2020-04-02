@@ -82,3 +82,9 @@ def test_disabled_functions_are_removed():
     assert len(fm.parallel_functions) == 1
     assert f4 in fm.parallel_functions
     assert f5 in fm.isolated_functions
+
+
+def test_default_order():
+    fm = FunctionManager([build_dummy()])
+    fm.organize_functions()
+    assert fm.parallel_functions[0].meta_data.order == 0
