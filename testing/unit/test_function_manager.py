@@ -58,7 +58,9 @@ def test_ordering_is_correct():
             build_dummy(order=150, isolated=True),
         ]
     )
-    fm.organize_functions()
+    fm._manage_function_disablement()
+    fm._remove_non_environmentally_friendly_functions()
+    fm._order_usable_functions()
     assert fm.isolated_functions[0].meta_data.order == 0
     assert fm.isolated_functions[1].meta_data.order == 1
     assert fm.isolated_functions[2].meta_data.order == 150
