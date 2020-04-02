@@ -3,7 +3,7 @@
 </kbd>
   <p></p>
 
-[![Build Status](https://api.travis-ci.org/symonk/pytest-validate.svg?branch=master)](https://travis-ci.org/symonk/pytest-validate)
+[![Build Status](https://api.travis-ci.org/symonk/pytest-infrastructure.svg?branch=master)](https://travis-ci.org/symonk/pytest-infrastructure)
 [![License Apache](https://img.shields.io/badge/license-Apache%202-brightgreen.svg)](https://github.com/symonk/pytest-infrastructure/blob/master/LICENSE)
 [![code coverage](https://codecov.io/gh/symonk/pytest-infrastructure/branch/master/graph/badge.svg)](https://codecov.io/gh/symonk/pytest-infrastructure)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=symonk_pytest-validate&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=symonk_pytest-validate)
