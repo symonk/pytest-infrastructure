@@ -1,8 +1,17 @@
+from concurrent.futures import as_completed
 from concurrent.futures.thread import ThreadPoolExecutor
+from dataclasses import dataclass
 from threading import current_thread
+from types import FunctionType
 from typing import Any
-
 from infrastructure import logger
+
+
+@dataclass
+class ScheduledResult:
+    fx: FunctionType
+    exc_info: Exception
+    result: None
 
 
 class FunctionScheduler:
@@ -15,6 +24,9 @@ class FunctionScheduler:
     def __init__(self, executable_functions, thread_count):
         self.thread_count = thread_count
         self.parallel_functions, self.isolated_functions = executable_functions
+        self.results = []
+        self.isolated_results = []
+        self.parallel_results = []
 
     def begin_workload(self) -> None:
         """
@@ -32,12 +44,22 @@ class FunctionScheduler:
             logger.info(
                 f"pytest-infrastructure is executing parallel thread-safe functions now"
             )
+
+            tracker = {}
             with ThreadPoolExecutor() as executor:
-                futures = [
-                    executor.submit(self.execute_function, fx)
-                    for fx in self.parallel_functions
-                ]
-                logger.info(futures)
+                for func in self.parallel_functions:
+                    tracker[func] = executor.submit(self.execute_function, func)
+
+            for func, handler in zip(
+                tracker.keys(), as_completed([tracker[k] for k in tracker.keys()])
+            ):
+                self.results.append(
+                    ScheduledResult(func, handler.result(), handler.exception())
+                )
+
+        self.parallel_results = [
+            result for result in self.results if not result.fx.meta_data.isolated
+        ]
 
     @logger.catch
     def execute_function(self, function) -> Any:

@@ -1,24 +1,5 @@
-from typing import List
 from infrastructure.function_manager import FunctionManager
-from testing.testing_utils import dummy, copy_func
-
-
-def build_dummy(
-    order: int = None,
-    enabled: bool = None,
-    not_on_env: List = None,
-    isolated: bool = None,
-):
-    fx = copy_func(dummy)
-    if order is not None:
-        fx.meta_data.order = order
-    if enabled is not None:
-        fx.meta_data.enabled = enabled
-    if not_on_env is not None:
-        fx.meta_data.not_on_env = [] or not_on_env
-    if isolated is not None:
-        fx.meta_data.isolated = isolated
-    return fx
+from testing.testing_utils import build_dummy
 
 
 def test_non_isolated_does_not_order_rewrite():
