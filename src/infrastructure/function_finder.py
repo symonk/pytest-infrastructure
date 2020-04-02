@@ -1,11 +1,10 @@
-import os
 from importlib import util
 from inspect import getmembers
 from typing import List, Callable
 
 
 class InfrastructureFunctionFinder:
-    def __init__(self, path: os.PathLike):
+    def __init__(self, path: str):
         self.path = path
 
     def gather_infrastructure_functions(self) -> List[Callable]:
