@@ -35,15 +35,11 @@ outlined below
 
 ---
 
-### The contract of @infrastructure
-    - **Ordering**: isolated=True functions care **NOT** for ordering.
-    - **Ordering**: functions without order= or explicitly setting order less than 0 will be execute **first**.
-
 ### Simple Example :hearts:
 Example:
 
 ```python
-from pytest_validate import infrastructure
+from pytest_infrastructure import infrastructure
 
 @infrastructure(order=1, enabled=True, only_on_env='staging', thread_safe=True)
 def some_function_to_validate_the_environment():
