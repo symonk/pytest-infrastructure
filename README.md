@@ -41,7 +41,7 @@ Example:
 ```python
 from pytest_infrastructure import infrastructure
 
-@infrastructure(order=1, enabled=True, only_on_env='staging', thread_safe=True)
+@infrastructure(order=1, enabled=True, not_on_env='staging', thread_safe=True)
 def some_function_to_validate_the_environment():
     pass
 
