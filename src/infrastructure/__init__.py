@@ -22,4 +22,5 @@ config = {
 logger.configure(**config)
 logger.enable(PLUGIN_NAME)
 
+
 __all__ = ["__version__", infrastructure, logger]

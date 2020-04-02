@@ -36,11 +36,6 @@ def pytest_addoption(parser):
         help="If specified will use threads to execute infrastructure threads in parallel",
     )
     group.addoption(
-        "--infrastructure-silent",
-        action="store_true",
-        help="Supress stdout message(s) from pytest infrastructure",
-    )
-    group.addoption(
         "--infrastructure-env",
         action="store",
         type=list,
@@ -50,9 +45,6 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-    silently = config.getoption("--infrastructure-silent")
-    if silently:
-        logger.disable(PLUGIN_NAME)
     main_plugin = PytestValidate(config)
     config.pluginmanager.register(main_plugin, main_plugin.name)
 

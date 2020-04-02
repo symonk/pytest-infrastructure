@@ -66,33 +66,3 @@ def test_validate_raises(testdir):
     )
     file_for_raises = get_path_to_test_file("validate_raises.py")
     testdir.runpytest(f"--infrastructure-file={file_for_raises}")
-
-
-def test_multiple_parallel(testdir):
-    testdir.runpytest(
-        f"--infrastructure-file={get_path_to_test_file('parallel_only.py')}"
-    )
-
-
-def test_silently_does_not_load_logger(testdir):
-    testdir.makepyfile(
-        """
-        def test_when_raises(request):
-            assert request.config.getoption('--infrastructure-silent')
-
-    """
-    )
-    result = testdir.runpytest("--infrastructure-silent")
-    assert result.ret == 0
-
-
-def test_silently_default(testdir):
-    testdir.makepyfile(
-        """
-        def test_when_raises(request):
-            assert not request.config.getoption('--infrastructure-silent')
-
-    """
-    )
-    result = testdir.runpytest()
-    assert result.ret == 0
