@@ -1,6 +1,6 @@
 import pytest
 
-from testing.testing_utils import get_path_to_test_file
+from .testing_utils import get_path_to_test_file
 
 pytest_plugins = "pytester"
 
