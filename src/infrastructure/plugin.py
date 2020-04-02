@@ -6,6 +6,7 @@ from infrastructure.strings import (
     VALIDATION_FX_ERROR_MESSAGE,
     VALIDATE_NO_FILE_PATH_OR_NO_FUNCTIONS_FOUND,
     VALIDATE_XDIST_SLAVE_OR_BYPASS_PROVIDED,
+    PLUGIN_NAME,
 )
 
 from infrastructure import logger
@@ -15,7 +16,7 @@ from infrastructure.function_scheduler import FunctionScheduler
 
 
 def pytest_addoption(parser):
-    group = parser.getgroup("infrastructure")
+    group = parser.getgroup(PLUGIN_NAME)
     group.addoption(
         "--infrastructure-file",
         action="store",
@@ -42,13 +43,16 @@ def pytest_addoption(parser):
     group.addoption(
         "--infrastructure-env",
         action="store",
-        type=str,
+        type=list,
         help="Runtime environment; only_on_env= of validation functions will account for this"
         "Note: if not specified, all infrastructure functions will be executed.",
     )
 
 
 def pytest_configure(config):
+    silently = config.getoption("--infrastructure-silent")
+    if silently:
+        logger.disable(PLUGIN_NAME)
     main_plugin = PytestValidate(config)
     config.pluginmanager.register(main_plugin, main_plugin.name)
 
@@ -79,7 +83,6 @@ class PytestValidate:
         self.name = "pytest_infrastructure"
         self.unfiltered_functions = None
         self.file_path = self.config.getoption("--infrastructure-file")
-        self.silently = config.getoption("--infrastructure-silent")
         self.environment = config.getoption("--infrastructure-env")
 
     def pytest_configure(self):
