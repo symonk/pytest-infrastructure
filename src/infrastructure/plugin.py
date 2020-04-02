@@ -44,6 +44,7 @@ def pytest_addoption(parser):
     )
 
 
+@pytest.mark.tryfirst
 def pytest_configure(config):
     main_plugin = PytestValidate(config)
     config.pluginmanager.register(main_plugin, main_plugin.name)
@@ -78,6 +79,7 @@ class PytestValidate:
         self.environment = config.getoption("--infrastructure-env")
         self.thread_count = config.getoption("--infrastructure-thread-count")
 
+    @pytest.mark.tryfirst
     def pytest_configure(self):
         logger.info(
             r"""
