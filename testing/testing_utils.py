@@ -1,7 +1,7 @@
 import os
 from typing import List
 
-from infrastructure import infrastructure
+from infrastructure.decorators import infrastructure
 import types
 import copy
 from __project_root__ import ROOT_DIR

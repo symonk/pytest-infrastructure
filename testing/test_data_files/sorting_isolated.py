@@ -1,4 +1,4 @@
-from validate import infrastructure
+from infrastructure.decorators import infrastructure
 
 
 @infrastructure(order=1)

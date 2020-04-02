@@ -1,4 +1,4 @@
-from infrastructure import infrastructure
+from infrastructure.decorators import infrastructure
 
 
 @infrastructure(isolated=False)
