@@ -1,3 +1,5 @@
 comment: off
 fixes:
   - "before/test-*::after/"
+ignore:
+  "**/setup.py"
