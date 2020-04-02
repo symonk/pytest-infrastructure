@@ -1,4 +1,4 @@
-from src.infrastructure.decorators import InfrastructureMeta
+from infrastructure import InfrastructureMeta
 
 
 def test_default_not_on_env():
