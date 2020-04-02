@@ -1,23 +1,6 @@
-import copy
 from typing import List
-
-from infrastructure import infrastructure
 from infrastructure.function_manager import FunctionManager
-import types
-
-
-@infrastructure()
-def dummy():
-    pass
-
-
-def copy_func(f):
-    fn = types.FunctionType(
-        f.__code__, f.__globals__, f.__name__, f.__defaults__, f.__closure__
-    )
-    # in case f was given attrs (note this dict is a shallow copy):
-    fn.__dict__ = copy.deepcopy(f.__dict__)
-    return fn
+from testing.testing_utils import dummy, copy_func
 
 
 def build_dummy(
