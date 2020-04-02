@@ -1,5 +1,5 @@
 <kbd>
-  <img src="https://github.com/symonk/pytest-infrastructure/blob/master/.github/.images/pytest_infrastructure.png">
+  <img src="https://github.com/symonk/pytest-infrastructure/blob/master/.github/.images/200px-logo.png">
 </kbd>
   <p></p>
 
