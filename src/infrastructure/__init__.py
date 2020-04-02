@@ -14,10 +14,8 @@ config = {
             "enqueue": True,
             "backtrace": True,
             "diagnose": True,
-        },
-        {"sink": f"{PLUGIN_NAME}.log", "serialize": True},
-    ],
-    "extra": {"user": "someone"},
+        }
+    ]
 }
 logger.configure(**config)
 logger.enable(PLUGIN_NAME)

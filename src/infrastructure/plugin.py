@@ -123,6 +123,7 @@ class PytestValidate:
             manager.yield_usable_functions(), self.thread_count
         )
         scheduler.begin_workload()
+        scheduler.report_summary()
 
     def _is_xdist_slave(self) -> bool:
         """

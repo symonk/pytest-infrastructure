@@ -61,6 +61,19 @@ class FunctionScheduler:
             result for result in self.results if not result.fx.meta_data.isolated
         ]
 
+    def report_summary(self):
+        if self.isolated_results:
+            for item in self.isolated_results:
+                logger.info(item)
+        else:
+            logger.info(f"pytest-validate never ran any isolated functions")
+
+        if self.parallel_results:
+            for item in self.isolated_results:
+                logger.info(item)
+        else:
+            logger.info(f"pytest-validate never ran any parallel functions")
+
     @logger.catch
     def execute_function(self, function) -> Any:
         """
