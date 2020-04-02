@@ -10,11 +10,13 @@ class FunctionManager:
     what order should they be in?
     """
 
-    def __init__(self, functions: List, environment: str = ""):
-        self.raw_functions: List = functions
+    def __init__(self, unfiltered_functions: List, environment: str = ""):
+        self.unfiltered_functions: List = unfiltered_functions
+        self.filtered_functions: List = []
         self.environment: str = environment
-        self.parallel_functions: Optional[List] = None
-        self.isolated_functions: Optional[List] = None
+        self.parallel_functions: Optional[List] = []
+        self.isolated_functions: Optional[List] = []
+        self.disabled_functions = []
 
     def organize_functions(self):
         """
@@ -22,8 +24,46 @@ class FunctionManager:
         and isolated functions. adhering to order.  disabled functions should never be added and functions
         marked not to run on the environment provided should also be never returned
         """
+        self._manage_function_disablement()
         self._remove_non_environmentally_friendly_functions()
         self._order_usable_functions()
+        logger.info(
+            f"pytest-infrastructure will attempt to execute the following functions sequentially:"
+        )
+        for fx in self.isolated_functions:
+            logger.info(f"function: {fx.meta_data}")
+
+        logger.info(
+            f"pytest-infrastructure will attempt to execute the following functions in parallel:"
+        )
+        for fx in self.parallel_functions:
+            logger.info(f"function: {fx.meta_data}")
+
+    def _manage_function_disablement(self):
+        """
+        Given an appropriate environment and functions enabled= state; remove them completely from runnable functions
+        """
+        logger.info(
+            f"pytest-infrastructure is disabling functions from executing where appropriate"
+        )
+
+        for fx in self.unfiltered_functions:
+            if not fx.meta_data.enabled or (
+                fx.meta_data.not_on_env
+                and self.environment.lower()
+                not in [env.lower() for env in fx.meta_data.not_on_env]
+            ):
+                self.disabled_functions.append(fx)
+                logger.info(
+                    f"function {fx.meta_data.name} was disabled due to enabled=False or not_on_env not succesful "
+                    f"meta data of the function was: {fx.meta_data} and environment was: {self.environment}"
+                )
+            else:
+                self.filtered_functions.append(fx)
+
+        logger.info(
+            f"pytest-validate has deregistered a total of len{self.disabled_functions} functions"
+        )
 
     def _remove_non_environmentally_friendly_functions(self):
         """
@@ -31,8 +71,8 @@ class FunctionManager:
         Remove any functions from self.isolated_functions where the function meta data does not match a specified env
         """
         (self.parallel_functions, self.isolated_functions) = (
-            [func for func in self.raw_functions if not func.meta_data.isolated],
-            [func for func in self.raw_functions if func.meta_data.isolated],
+            [func for func in self.filtered_functions if not func.meta_data.isolated],
+            [func for func in self.filtered_functions if func.meta_data.isolated],
         )  # dummy for now until implemented
 
     def _order_usable_functions(self):

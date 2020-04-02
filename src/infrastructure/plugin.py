@@ -77,7 +77,7 @@ class PytestValidate:
     def __init__(self, config):
         self.config = config
         self.name = "pytest_infrastructure"
-        self.functions = None
+        self.unfiltered_functions = None
         self.file_path = self.config.getoption("--infrastructure-file")
         self.silently = config.getoption("--infrastructure-silent")
         self.environment = config.getoption("--infrastructure-env")
@@ -108,15 +108,12 @@ class PytestValidate:
         logger.info(
             f"Pytest-infrastructure is scanning for @infrastructure functions in {self.file_path}"
         )
-        self.functions = ValidateFunctionFinder(
+        self.unfiltered_functions = ValidateFunctionFinder(
             self.file_path
         ).gather_validate_functions()
-        if not self.functions:
+        if not self.unfiltered_functions:
             self._unregister(VALIDATE_NO_FILE_PATH_OR_NO_FUNCTIONS_FOUND)
         else:
-            logger.info(
-                f"Pytest-infrastructure found a total of {len(self.functions)} function(s); these are displayed below"
-            )
             self.validate()
 
     def validate(self) -> None:
@@ -124,7 +121,7 @@ class PytestValidate:
         This is validates bread and butter; it is responsible for executing the functions in a controlled fashion
         in-line with the meta data of the particular function(s)
         """
-        manager = FunctionManager(self.functions, self.environment)
+        manager = FunctionManager(self.unfiltered_functions, self.environment)
         manager.organize_functions()
         scheduler = FunctionScheduler(manager.yield_usable_functions())
         scheduler.begin_workload()

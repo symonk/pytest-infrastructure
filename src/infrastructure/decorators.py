@@ -1,6 +1,6 @@
 from functools import wraps
 from typing import List
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(repr=True)
@@ -8,7 +8,7 @@ class InfrastructureMeta:
     validate: bool = True
     order: int = 0
     enabled: bool = True
-    only_on_env: str = None
+    not_on_env: List = field(default_factory=lambda: list)
     isolated: bool = False
     name: str = None
 
@@ -16,14 +16,14 @@ class InfrastructureMeta:
 def infrastructure(
     order: int = 0,
     enabled: bool = True,
-    only_on_env: str = None,
+    not_on_env: List = None,
     isolated: bool = False,
 ):
     def real_decorator(func):
         func.meta_data = InfrastructureMeta(
             order=order,
             enabled=enabled,
-            only_on_env=only_on_env,
+            not_on_env=not_on_env or [],
             isolated=isolated,
             name=func.__name__,
         )
