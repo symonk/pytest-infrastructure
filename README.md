@@ -45,7 +45,7 @@ def some_function_to_validate_the_environment():
     # This will be executed first, order=1 (n.b => order 0 is considered priority and negative order is equal to 0
 
 
-@infrastructure(enabled=True, exclude_on_environments='production', isolated=False)
+@infrastructure(enabled=True, not_on_env='production', isolated=False)
 def some_other_function_to_validate_the_stack():
     # This will be run sequentially in parallel
     pass
