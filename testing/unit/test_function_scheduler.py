@@ -8,3 +8,10 @@ def test_fs_parallel_results():
     fs.begin_workload()
     assert len(fs.parallel_results) == 1
     assert fs.parallel_results[0].fx == fx
+
+
+def test_fs_none_data_sets():
+    fs = FunctionScheduler(([], []), 1)
+    fs.begin_workload()
+    assert len(fs.parallel_results) == 0
+    assert len(fs.isolated_results) == 0
