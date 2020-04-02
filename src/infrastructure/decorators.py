@@ -8,7 +8,7 @@ class InfrastructureMeta:
     validate: bool = True
     order: int = 0
     enabled: bool = True
-    not_on_env: List = field(default_factory=lambda: list)
+    not_on_env: List = field(default_factory=lambda: [])
     isolated: bool = False
     name: str = None
 
