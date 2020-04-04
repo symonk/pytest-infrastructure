@@ -4,12 +4,9 @@ install_requires = ["loguru>=0.4.1"]
 
 with open("README.md") as f:
     long_description = f.read()
-
 setup(
     name="pytest-infrastructure",
-    use_scm_version={"write_to": "src/infrastructure/_version.py"},
     description="pytest stack validation prior to testing executing",
-    long_description=long_description,
     license="Apache Software License 2.0",
     author="Simon Kerr",
     url="https://github.com/symonk/pytest-infrastructure",
@@ -26,7 +23,6 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Framework :: Pytest",
-        "Intended Audience :: Developers/QA",
         "Topic :: Software Development :: Testing",
         "Topic :: Software Development :: Quality Assurance",
         "Programming Language :: Python :: 3.7",

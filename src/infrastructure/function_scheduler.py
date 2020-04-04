@@ -37,7 +37,9 @@ class FunctionScheduler:
                 f"pytest-infrastructure is executing sequential non thread-safe functions now..."
             )
         for function in self.isolated_functions:
-            self.execute_function(function)
+            result = self.execute_function(function)
+            if isinstance(result, Exception):
+                raise result
 
         if self.parallel_functions:
             logger.info(
@@ -53,10 +55,16 @@ class FunctionScheduler:
                 tracker.keys(), as_completed([tracker[k] for k in tracker.keys()])
             ):
                 self.results.append(ScheduledResult(func, handler.result()))
+            self.parallel_results = [
+                result for result in self.results if not result.fx.meta_data.isolated
+            ]
+            for result in self.results:
+                self.handle_raising(result)
 
-        self.parallel_results = [
-            result for result in self.results if not result.fx.meta_data.isolated
-        ]
+    @logger.catch
+    def handle_raising(self, fx):
+        if isinstance(fx.result, Exception):
+            raise fx.result
 
     def report_summary(self):
         if self.isolated_results:
@@ -71,7 +79,6 @@ class FunctionScheduler:
         else:
             logger.info(f"pytest-validate never ran any parallel functions")
 
-    @logger.catch
     def execute_function(self, function) -> Any:
         """
         Responsible for taking a single function and executing it
@@ -80,6 +87,7 @@ class FunctionScheduler:
         current_thread().name = f"{function.meta_data.name}"
         logger.info(f"Executing {function.meta_data.name}")
         try:
-            result = function()
-        except:  # noqa
-            return result
+            return function()
+        except Exception as ex:  # noqa
+            logger.error(f"exception raised by {function.meta_data.name}")
+            return ex
