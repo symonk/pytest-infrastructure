@@ -1,6 +1,5 @@
 import sys
 
-from infrastructure._version import version as __version__
 from loguru import logger
 from .strings import PLUGIN_NAME
 from .function_finder import InfrastructureFunctionFinder  # noqa
