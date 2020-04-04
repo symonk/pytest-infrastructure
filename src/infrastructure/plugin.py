@@ -124,7 +124,7 @@ class PytestValidate:
         scheduler = FunctionScheduler(
             manager.yield_usable_functions(), self.thread_count
         )
-        scheduler.begin_workload()
+        scheduler.execute_functions()
         scheduler.report_summary()
 
     def _is_xdist_slave(self) -> bool:

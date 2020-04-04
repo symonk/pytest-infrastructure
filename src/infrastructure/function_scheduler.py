@@ -28,7 +28,7 @@ class FunctionScheduler:
         self.isolated_results = []
         self.parallel_results = []
 
-    def begin_workload(self) -> None:
+    def execute_functions(self) -> None:
         """
         Entry point for the scheduler to begin doing its work, here it will manage execution keeping track of
         exceptions and smartly managing both thread safe parallel and isolated runs
@@ -82,4 +82,7 @@ class FunctionScheduler:
         """
         current_thread().name = f"{function.meta_data.name}"
         logger.info(f"Executing {function.meta_data.name}")
-        return function()
+        try:
+            result = function()
+        except:  # noqa
+            return result
