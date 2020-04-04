@@ -10,7 +10,6 @@ from infrastructure import logger
 @dataclass
 class ScheduledResult:
     fx: FunctionType
-    exc_info: Exception
     result: None
 
 
@@ -53,9 +52,7 @@ class FunctionScheduler:
             for func, handler in zip(
                 tracker.keys(), as_completed([tracker[k] for k in tracker.keys()])
             ):
-                self.results.append(
-                    ScheduledResult(func, handler.result(), handler.exception())
-                )
+                self.results.append(ScheduledResult(func, handler.result()))
 
         self.parallel_results = [
             result for result in self.results if not result.fx.meta_data.isolated
