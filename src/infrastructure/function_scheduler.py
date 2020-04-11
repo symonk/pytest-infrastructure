@@ -1,6 +1,7 @@
 from concurrent.futures import as_completed
 from concurrent.futures.thread import ThreadPoolExecutor
 from dataclasses import dataclass
+from functools import partial
 from threading import current_thread
 from types import FunctionType
 from typing import Any
@@ -10,7 +11,7 @@ from infrastructure import logger
 @dataclass
 class ScheduledResult:
     fx: FunctionType
-    result: None
+    result: Exception
 
 
 class FunctionScheduler:
@@ -24,70 +25,47 @@ class FunctionScheduler:
         self.thread_count = thread_count
         self.parallel_functions, self.isolated_functions = executable_functions
         self.results = []
-        self.isolated_results = []
-        self.parallel_results = []
 
     def execute_functions(self) -> None:
         """
         Entry point for the scheduler to begin doing its work, here it will manage execution keeping track of
         exceptions and smartly managing both thread safe parallel and isolated runs
         """
-        if self.isolated_functions:
-            logger.info(
-                f"pytest-infrastructure is executing sequential non thread-safe functions now..."
-            )
-        for function in self.isolated_functions:
-            result = self.execute_function(function)
-            if isinstance(result, Exception):
-                raise result
+        for fx in self.isolated_functions:
+            self.execute_sequential_function(fx)
+        self.execute_parallel_functions(self.parallel_functions)
 
-        if self.parallel_functions:
-            logger.info(
-                f"pytest-infrastructure is executing parallel thread-safe functions now"
-            )
+    def report_summary(self) -> None:
+        """
+        Responsible for outputting the results of all of the function execution
+        """
+        for result in self.results:
+            logger.info(result)
 
-            tracker = {}
-            with ThreadPoolExecutor() as executor:
-                for func in self.parallel_functions:
-                    tracker[func] = executor.submit(self.execute_function, func)
-
-            for func, handler in zip(
-                tracker.keys(), as_completed([tracker[k] for k in tracker.keys()])
-            ):
-                self.results.append(ScheduledResult(func, handler.result()))
-            self.parallel_results = [
-                result for result in self.results if not result.fx.meta_data.isolated
-            ]
-            for result in self.results:
-                self.handle_raising(result)
-
-    @logger.catch
-    def handle_raising(self, fx):
-        if isinstance(fx.result, Exception):
-            raise fx.result
-
-    def report_summary(self):
-        if self.isolated_results:
-            for item in self.isolated_results:
-                logger.info(item)
-        else:
-            logger.info(f"pytest-validate never ran any isolated functions")
-
-        if self.parallel_results:
-            for item in self.isolated_results:
-                logger.info(item)
-        else:
-            logger.info(f"pytest-validate never ran any parallel functions")
-
-    def execute_function(self, function) -> Any:
+    def execute_sequential_function(self, fx) -> Any:
         """
         Responsible for taking a single function and executing it
         note: this is not responsible for thread management, this is done prior and dispatched to this function
         """
-        current_thread().name = f"{function.meta_data.name}"
-        logger.info(f"Executing {function.meta_data.name}")
+        current_thread().name = f"{fx.meta_data.name}"
+        result = partial(ScheduledResult, fx)
         try:
-            return function()
+            fx()
+            self.results.append(result())
         except Exception as ex:  # noqa
-            logger.error(f"exception raised by {function.meta_data.name}")
-            return ex
+            self.results.append(result(result=ex))
+
+    def execute_parallel_functions(self, fxs):
+        """
+        using a thread pool executor; submit the concurrent functions and keep record of results against the
+        corresponding called function
+        :param fxs: a list of functions to be submitted for concurrent execution
+        """
+        if not fxs:
+            return
+        future_tracker = {}
+        with ThreadPoolExecutor(max_workers=len(fxs)) as executor:
+            for fx in fxs:
+                future_tracker[fx] = as_completed(
+                    executor.submit(self.execute_sequential_function, fx)
+                )

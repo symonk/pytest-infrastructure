@@ -1,4 +1,5 @@
 import sys
+from threading import Condition
 
 from loguru import logger
 from .strings import PLUGIN_NAME
@@ -11,7 +12,6 @@ config = {
         {
             "sink": sys.stdout,
             "format": "pytest-infrastructure | {message}",
-            "colorize": True,
             "enqueue": True,
             "backtrace": True,
             "diagnose": True,
@@ -23,3 +23,5 @@ logger.enable(PLUGIN_NAME)
 
 
 __all__ = ["__version__", logger]
+
+c = Condition()
