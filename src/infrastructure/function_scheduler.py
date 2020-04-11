@@ -52,7 +52,8 @@ class FunctionScheduler:
             for failure in failures:
                 logger.info(
                     pformat(
-                        f"Failure caused by: {failure.fx.meta_data.name} due to [{failure.exc_type}] \n {failure.exc_info}"
+                        f"Failure caused by: {failure.fx.meta_data.name} due to [{failure.exc_type}] \n "
+                        f"{failure.exc_info}"
                     )
                 )
             pytest.exit(
