@@ -115,6 +115,3 @@ class FunctionManager:
             function.meta_data.not_on_env,
             function.meta_data.isolated,
         )
-
-    def yield_usable_functions(self) -> Tuple:
-        return self.parallel_functions, self.isolated_functions

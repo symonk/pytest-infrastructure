@@ -50,7 +50,7 @@ def test_disabled_functions_are_removed():
     assert f5 in fm.isolated_functions
 
 
-def test_fs_static_strip():
+def test_fm_static_strip():
     @infrastructure(order=1000, isolated=True, not_on_env=["one", "two"], enabled=False)
     def example():
         pass
@@ -61,3 +61,4 @@ def test_fs_static_strip():
     assert not enabled
     assert not_on_env == ["one", "two"]
     assert isolated
+
