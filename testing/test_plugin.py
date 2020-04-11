@@ -93,10 +93,10 @@ def test_thread_count_override(testdir):
 def test_plugin_summary(testdir):
     testdir.makepyfile(
         """
-        def test_when_raises(request):
+        def test_summary(request):
             pass
 
     """
     )
     file = get_path_to_test_file("hybrid_mix_of_functions.py")
-    assert testdir.runpytest(f"--infrastructure-file={file}").ret == 0
+    assert testdir.runpytest(f"--infrastructure-file={file}").ret == 5

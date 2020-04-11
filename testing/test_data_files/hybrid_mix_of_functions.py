@@ -3,7 +3,7 @@ from infrastructure.decorators import infrastructure
 
 @infrastructure(isolated=True)
 def validate_function_1():
-    pass
+    raise Exception('exception!')
 
 
 @infrastructure(isolated=True)

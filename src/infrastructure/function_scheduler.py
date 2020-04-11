@@ -1,17 +1,22 @@
 from concurrent.futures import as_completed
+
+import pytest
+from infrastructure import logger
 from concurrent.futures.thread import ThreadPoolExecutor
 from dataclasses import dataclass
 from functools import partial
 from threading import current_thread
 from types import FunctionType
 from typing import Any
-from infrastructure import logger
 
 
 @dataclass
 class ScheduledResult:
     fx: FunctionType
-    result: Exception
+    exc_info: Exception = None
+
+    def __repr__(self):
+        return f"function: {self.fx.meta_data.name} | result: {self.exc_info}"
 
 
 class FunctionScheduler:
@@ -39,8 +44,16 @@ class FunctionScheduler:
         """
         Responsible for outputting the results of all of the function execution
         """
-        for result in self.results:
-            logger.info(result)
+        failures = [result for result in self.results if result.exc_info is not None]
+        if failures:
+            for failure in failures:
+                print(
+                    f"Failure caused by: {failure.fx.meta_data.name} due to => {failure.exc_info}"
+                )
+            pytest.exit(
+                "pytest-infrastructure has deemed the run a failure; no tests will be collected",
+                5,
+            )
 
     def execute_sequential_function(self, fx) -> Any:
         """
@@ -48,12 +61,12 @@ class FunctionScheduler:
         note: this is not responsible for thread management, this is done prior and dispatched to this function
         """
         current_thread().name = f"{fx.meta_data.name}"
-        result = partial(ScheduledResult, fx)
+        scheduled = partial(ScheduledResult, fx)
         try:
             fx()
-            self.results.append(result())
+            self.results.append(scheduled())
         except Exception as ex:  # noqa
-            self.results.append(result(result=ex))
+            self.results.append(scheduled(exc_info=ex))
 
     def execute_parallel_functions(self, fxs):
         """
