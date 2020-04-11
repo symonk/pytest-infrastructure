@@ -1,4 +1,6 @@
+import traceback
 from concurrent.futures import as_completed
+from pprint import pformat
 
 import pytest
 from infrastructure import logger
@@ -13,10 +15,11 @@ from typing import Any
 @dataclass
 class ScheduledResult:
     fx: FunctionType
-    exc_info: Exception = None
+    exc_type: Exception = None
+    exc_info: str = None
 
     def __repr__(self):
-        return f"function: {self.fx.meta_data.name} | result: {self.exc_info}"
+        return f"function: {self.fx.meta_data.name} | result: {self.exc_type} | traceback: {self.exc_info}"
 
 
 class FunctionScheduler:
@@ -47,8 +50,10 @@ class FunctionScheduler:
         failures = [result for result in self.results if result.exc_info is not None]
         if failures:
             for failure in failures:
-                print(
-                    f"Failure caused by: {failure.fx.meta_data.name} due to => {failure.exc_info}"
+                logger.info(
+                    pformat(
+                        f"Failure caused by: {failure.fx.meta_data.name} due to [{failure.exc_type}] \n {failure.exc_info}"
+                    )
                 )
             pytest.exit(
                 "pytest-infrastructure has deemed the run a failure; no tests will be collected",
@@ -66,7 +71,9 @@ class FunctionScheduler:
             fx()
             self.results.append(scheduled())
         except Exception as ex:  # noqa
-            self.results.append(scheduled(exc_info=ex))
+            self.results.append(
+                scheduled(exc_type=type(ex), exc_info=(ex, traceback.format_exc()))
+            )
 
     def execute_parallel_functions(self, fxs):
         """
