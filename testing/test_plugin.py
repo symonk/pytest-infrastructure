@@ -88,3 +88,15 @@ def test_thread_count_override(testdir):
     """
     )
     assert testdir.runpytest("--infrastructure-thread-count=10").ret == 0
+
+
+def test_plugin_summary(testdir):
+    testdir.makepyfile(
+        """
+        def test_when_raises(request):
+            pass
+
+    """
+    )
+    file = get_path_to_test_file("hybrid_mix_of_functions.py")
+    assert testdir.runpytest(f"--infrastructure-file={file}").ret == 0

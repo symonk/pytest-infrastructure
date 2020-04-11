@@ -23,5 +23,3 @@ logger.enable(PLUGIN_NAME)
 
 
 __all__ = ["__version__", logger]
-
-c = Condition()
