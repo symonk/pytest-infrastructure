@@ -3,10 +3,12 @@ import pytest
 from infrastructure.exceptions import ValidationFixtureException
 from infrastructure.function_finder import InfrastructureFunctionFinder
 from infrastructure.strings import (
-    VALIDATION_FX_ERROR_MESSAGE,
-    VALIDATE_NO_FILE_PATH_OR_NO_FUNCTIONS_FOUND,
-    VALIDATE_XDIST_SLAVE_OR_BYPASS_PROVIDED,
-    PLUGIN_NAME,
+    INFRASTRUCTURE_NO_FILE_PATH_OR_FUNCS_FOUND,
+    INFRASTRUCTURE_FX_ERROR_MESSAGE,
+    INFRASTRUCTURE_BYPASS_PROVIDED,
+    INFRASTRUCTURE_COLLECTION_ONLY,
+    INFRASTRUCTURE_XDIST_SLAVE,
+    INFRASTRUCTURE_PLUGIN_NAME,
 )
 
 from infrastructure import logger
@@ -16,7 +18,7 @@ from infrastructure.function_scheduler import FunctionScheduler
 
 
 def pytest_addoption(parser):
-    group = parser.getgroup(PLUGIN_NAME)
+    group = parser.getgroup(INFRASTRUCTURE_PLUGIN_NAME)
     group.addoption(
         "--infrastructure-file",
         action="store",
@@ -62,7 +64,7 @@ def validation_file(request):
     if validation_file:
         return validation_file
     else:
-        raise ValidationFixtureException(VALIDATION_FX_ERROR_MESSAGE)
+        raise ValidationFixtureException(INFRASTRUCTURE_FX_ERROR_MESSAGE)
 
 
 class PytestValidate:
@@ -93,14 +95,16 @@ class PytestValidate:
         **********************************************************************"""
         )
         logger.info("Pytest-infrastructure is checking if it is allowed to run...")
-        if (
-            not self.config.getoption("--bypass-validation")
-            or self._is_xdist_slave()
-            or self.config.getoption("--collect-only")
-        ):
-            self._unregister(VALIDATE_XDIST_SLAVE_OR_BYPASS_PROVIDED)
-        else:
-            self.collect_validate_functions()
+        if not self.config.getoption("--bypass-validation"):
+            self._unregister(INFRASTRUCTURE_BYPASS_PROVIDED)
+            return
+        if self._is_xdist_slave():
+            self._unregister(INFRASTRUCTURE_XDIST_SLAVE)
+            return
+        if self.config.getoption("--collect-only"):
+            self._unregister(INFRASTRUCTURE_COLLECTION_ONLY)
+            return
+        self.collect_validate_functions()
 
     def collect_validate_functions(self):
         logger.info(
@@ -110,7 +114,7 @@ class PytestValidate:
             self.file_path
         ).gather_infrastructure_functions()
         if not self.unfiltered_functions:
-            self._unregister(VALIDATE_NO_FILE_PATH_OR_NO_FUNCTIONS_FOUND)
+            self._unregister(INFRASTRUCTURE_NO_FILE_PATH_OR_FUNCS_FOUND)
         else:
             self.validate()
 

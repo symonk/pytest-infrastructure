@@ -2,8 +2,7 @@ import sys
 import os
 
 from loguru import logger
-from .strings import PLUGIN_NAME
-from time import time
+from .strings import INFRASTRUCTURE_PLUGIN_NAME
 from .function_finder import InfrastructureFunctionFinder  # noqa
 from .function_manager import FunctionManager  # noqa
 from .function_scheduler import FunctionScheduler  # noqa
@@ -18,7 +17,7 @@ config = {
             "diagnose": True,
         },
         {
-            "sink": f"pytest-infra{os.path.sep}{PLUGIN_NAME}-{int(round(time() * 1000))}-{os.getpid()}.log",
+            "sink": f"pytest-infra{os.path.sep}{INFRASTRUCTURE_PLUGIN_NAME}-{os.getpid()}.log",
             "format": "pytest-infrastructure | {message}",
             "enqueue": True,
             "backtrace": True,
@@ -27,7 +26,7 @@ config = {
     ]
 }
 logger.configure(**config)
-logger.enable(PLUGIN_NAME)
+logger.enable(INFRASTRUCTURE_PLUGIN_NAME)
 
 
 __all__ = ["__version__", logger]
