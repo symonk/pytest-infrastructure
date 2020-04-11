@@ -112,7 +112,7 @@ class FunctionManager:
         return (
             function.meta_data.order,
             function.meta_data.enabled,
-            function.meta_data.only_on_env,
+            function.meta_data.not_on_env,
             function.meta_data.isolated,
         )
 

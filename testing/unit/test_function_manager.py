@@ -1,4 +1,6 @@
-from infrastructure import FunctionManager
+from infrastructure.function_manager import FunctionManager
+from infrastructure.decorators import infrastructure
+
 from testing.testing_utils import build_dummy
 
 
@@ -46,3 +48,16 @@ def test_disabled_functions_are_removed():
     assert len(fm.parallel_functions) == 1
     assert f4 in fm.parallel_functions
     assert f5 in fm.isolated_functions
+
+
+def test_fs_static_strip():
+    @infrastructure(order=1000, isolated=True, not_on_env=["one", "two"], enabled=False)
+    def example():
+        pass
+
+    fx = FunctionManager([example])._strip_meta_data_from_function(example)
+    order, enabled, not_on_env, isolated = fx
+    assert order == 1000
+    assert not enabled
+    assert not_on_env == ["one", "two"]
+    assert isolated
