@@ -100,3 +100,16 @@ def test_plugin_summary(testdir):
     )
     file = get_path_to_test_file("hybrid_mix_of_functions.py")
     assert testdir.runpytest(f"--infrastructure-file={file}").ret == 5
+
+
+def test_collect_only_unregistered(testdir):
+    testdir.makepyfile(
+        """
+        def test_can_collect_validate_functions():
+            pass
+
+    """
+    )
+    file_for_arg = get_sample_validate_file()
+    result = testdir.runpytest(f"--infrastructure-file={file_for_arg} --collect-only")
+    result.stdout.fnmatch_lines(["*--collect-only was specified on the CLI*"])
