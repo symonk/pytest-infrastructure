@@ -61,4 +61,3 @@ def test_fm_static_strip():
     assert not enabled
     assert not_on_env == ["one", "two"]
     assert isolated
-

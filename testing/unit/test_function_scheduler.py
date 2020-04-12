@@ -1,4 +1,4 @@
-from infrastructure import FunctionScheduler
+from infrastructure.function_scheduler import FunctionScheduler
 from infrastructure.decorators import infrastructure
 from testing.testing_utils import build_dummy
 

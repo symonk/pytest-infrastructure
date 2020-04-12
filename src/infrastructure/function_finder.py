@@ -3,7 +3,7 @@ from inspect import getmembers
 from typing import List, Callable
 
 
-class InfrastructureFunctionFinder:
+class FunctionFinder:
     def __init__(self, path: str):
         self.path = path
 
