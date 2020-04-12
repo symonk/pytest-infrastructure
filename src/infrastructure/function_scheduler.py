@@ -1,3 +1,4 @@
+import time
 import traceback
 from concurrent.futures import as_completed
 from pprint import pprint
@@ -9,6 +10,8 @@ from functools import partial
 from threading import current_thread
 from types import FunctionType
 from typing import Any
+
+from yaspin import yaspin
 
 
 @dataclass
@@ -65,13 +68,16 @@ class FunctionScheduler:
         """
         current_thread().name = f"{fx.meta_data.name}"
         scheduled = partial(ScheduledResult, fx)
-        try:
-            fx()
-            self.results.append(scheduled())
-        except Exception as ex:  # noqa
-            self.results.append(
-                scheduled(exc_type=type(ex), exc_info=(ex, traceback.format_exc()))
-            )
+        with yaspin() as spinner:
+            try:
+                fx()
+                self.results.append(scheduled())
+                spinner.ok("passed")
+            except Exception as ex:  # noqa
+                self.results.append(
+                    scheduled(exc_type=type(ex), exc_info=(ex, traceback.format_exc()))
+                )
+                spinner.fail("failed")
 
     def execute_parallel_functions(self, fxs):
         """
