@@ -9,5 +9,5 @@ def test_plugin_utilities(capfd):
 
 
 def test_get_text():
-    text = get_text_in_color("green", 'This is my message')
+    text = get_text_in_color("green", "This is my message")
     assert text == "\x1b[32m This is my message \x1b[39m"
