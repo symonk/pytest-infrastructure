@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import pytest
 from infrastructure.exceptions import ValidationFixtureException
 from infrastructure.function_finder import FunctionFinder
@@ -10,8 +11,6 @@ from infrastructure.strings import (
     INFRASTRUCTURE_XDIST_SLAVE,
     INFRASTRUCTURE_PLUGIN_NAME,
 )
-
-from infrastructure import logger
 
 from infrastructure.function_manager import FunctionManager
 from infrastructure.function_scheduler import FunctionScheduler
@@ -83,7 +82,7 @@ class PytestValidate:
 
     @pytest.mark.tryfirst
     def pytest_configure(self):
-        logger.info(
+        print(
             r"""
         **********************************************************************
          ______                                    _         ___
@@ -95,20 +94,20 @@ class PytestValidate:
                (____/
         **********************************************************************"""
         )
-        logger.info("Pytest-infrastructure is checking if it is allowed to run...")
+        print("Pytest-infrastructure is checking if it is allowed to run...")
         if not self.config.getoption("--bypass-validation"):
             self._unregister(INFRASTRUCTURE_BYPASS_PROVIDED)
             return
         if self._is_xdist_slave():
             self._unregister(INFRASTRUCTURE_XDIST_SLAVE)
             return
-        if self.config.getoption("--collect-only"):
+        if self.config.getoption("collectonly"):
             self._unregister(INFRASTRUCTURE_COLLECTION_ONLY)
             return
         self.collect_validate_functions()
 
     def collect_validate_functions(self):
-        logger.info(
+        print(
             f"Pytest-infrastructure is scanning for @infrastructure functions in {self.file_path}"
         )
         self.unfiltered_functions = FunctionFinder(
@@ -141,7 +140,5 @@ class PytestValidate:
         return hasattr(self.config, "slaveinput")
 
     def _unregister(self, reason: str):
-        logger.info(
-            f"pytest-infrastructure will unregister the plugin because: {reason}"
-        )
+        print(f"pytest-infrastructure will unregister the plugin because: {reason}")
         self.config.pluginmanager.unregister(self, self.name)

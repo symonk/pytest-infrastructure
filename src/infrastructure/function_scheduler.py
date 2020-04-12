@@ -1,9 +1,8 @@
 import traceback
 from concurrent.futures import as_completed
-from pprint import pformat
+from pprint import pprint
 
 import pytest
-from infrastructure import logger
 from concurrent.futures.thread import ThreadPoolExecutor
 from dataclasses import dataclass
 from functools import partial
@@ -50,11 +49,9 @@ class FunctionScheduler:
         failures = [result for result in self.results if result.exc_info is not None]
         if failures:
             for failure in failures:
-                logger.info(
-                    pformat(
-                        f"Failure caused by: {failure.fx.meta_data.name} due to [{failure.exc_type}] \n "
-                        f"{failure.exc_info}"
-                    )
+                pprint(
+                    f"Failure caused by: {failure.fx.meta_data.name} due to [{failure.exc_type}] \n "
+                    f"{failure.exc_info}"
                 )
             pytest.exit(
                 "pytest-infrastructure has deemed the run a failure; no tests will be collected",

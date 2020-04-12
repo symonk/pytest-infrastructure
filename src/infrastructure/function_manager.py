@@ -1,5 +1,4 @@
 from typing import Tuple, List, Optional
-from infrastructure import logger
 
 
 class FunctionManager:
@@ -27,23 +26,23 @@ class FunctionManager:
         self._manage_function_disablement()
         self._remove_non_environmentally_friendly_functions()
         self._order_usable_functions()
-        logger.info(
+        print(
             f"pytest-infrastructure will attempt to execute the following functions sequentially:"
         )
         for fx in self.isolated_functions:
-            logger.info(f"function: {fx.meta_data}")
+            print(f"function: {fx.meta_data}")
 
-        logger.info(
+        print(
             f"pytest-infrastructure will attempt to execute the following functions in parallel:"
         )
         for fx in self.parallel_functions:
-            logger.info(f"function: {fx.meta_data}")
+            print(f"function: {fx.meta_data}")
 
     def _manage_function_disablement(self):
         """
         Given an appropriate environment and functions enabled= state; remove them completely from runnable functions
         """
-        logger.info(
+        print(
             f"pytest-infrastructure is disabling functions from executing where appropriate"
         )
 
@@ -54,14 +53,14 @@ class FunctionManager:
                 not in [env.lower() for env in fx.meta_data.not_on_env]
             ):
                 self.disabled_functions.append(fx)
-                logger.info(
+                print(
                     f"function {fx.meta_data.name} was disabled due to enabled=False or not_on_env not succesful "
                     f"meta data of the function was: {fx.meta_data} and environment was: {self.environment}"
                 )
             else:
                 self.filtered_functions.append(fx)
 
-        logger.info(
+        print(
             f"pytest-validate has deregistered a total of len{self.disabled_functions} functions"
         )
 
@@ -82,23 +81,23 @@ class FunctionManager:
         all ran together
         """
         if self.isolated_functions:
-            logger.info(f"reshuffling order to detect any negatively ordered functions")
+            print(f"reshuffling order to detect any negatively ordered functions")
             for fx in self.isolated_functions:
                 if fx.meta_data.order < 0:
                     fx.meta_data.order = 0
 
-            logger.info(
+            print(
                 f"current order of functions collected is {[fx.meta_data.order for fx in self.isolated_functions]}"
                 f"pytest-infrastructure is applying execution order now...."
             )
             self.isolated_functions.sort(
                 key=lambda func_dataclass: func_dataclass.meta_data.order
             )
-            logger.info(
+            print(
                 f"functions have been sorted, execution for isolated functions is as follows:"
             )
             for fx in self.isolated_functions:
-                logger.info(
+                print(
                     f"order => {fx.meta_data.order} ~ function => {fx.meta_data.name}"
                 )
 

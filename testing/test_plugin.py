@@ -110,6 +110,9 @@ def test_collect_only_unregistered(testdir):
 
     """
     )
-    file_for_arg = get_sample_validate_file()
-    result = testdir.runpytest(f"--infrastructure-file={file_for_arg} --collect-only")
-    result.stdout.fnmatch_lines(["*--collect-only was specified on the CLI*"])
+    result = testdir.runpytest(f"--collect-only")
+    result.stdout.fnmatch_lines(
+        [
+            "*pytest-infrastructure will unregister the plugin because: --collect-only was *"
+        ]
+    )
