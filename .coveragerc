@@ -19,5 +19,3 @@ exclude_lines =
     ^\s*pass
 omit =
     setup.py
-
-

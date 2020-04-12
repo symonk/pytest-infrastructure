@@ -1,4 +1,3 @@
-import time
 import traceback
 from concurrent.futures import as_completed
 from pprint import pprint
