@@ -21,7 +21,7 @@ def pytest_addoption(parser):
     group.addoption(
         "--infrastructure-file",
         action="store",
-        default=None,
+        type=str,
         help="File path to your .py file which contains infrastructure functions",
     )
     group.addoption(
@@ -82,18 +82,6 @@ class PytestValidate:
 
     @pytest.mark.tryfirst
     def pytest_configure(self):
-        print(
-            r"""
-        **********************************************************************
-         ______                                    _         ___
-        (_____ \        _                _        | |       / __)
-         _____) )   _ _| |_ _____  ___ _| |_ _____| |____ _| |__ ____ _____
-        |  ____/ | | (_   _) ___ |/___|_   _|_____) |  _ (_   __) ___|____ |
-        | |    | |_| | | |_| ____|___ | | |_      | | | | || | | |   / ___ |
-        |_|     \__  |  \__)_____|___/   \__)     |_|_| |_||_| |_|   \_____|
-               (____/
-        **********************************************************************"""
-        )
         print("Pytest-infrastructure is checking if it is allowed to run...")
         if not self.config.getoption("--bypass-validation"):
             self._unregister(INFRASTRUCTURE_BYPASS_PROVIDED)
