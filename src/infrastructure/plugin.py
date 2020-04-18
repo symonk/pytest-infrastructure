@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import os
 
 import pytest
 from infrastructure.exceptions import ValidationFixtureException
 from infrastructure.function_finder import FunctionFinder
+from infrastructure.plugin_utilities import get_text_in_color
 from infrastructure.strings import (
     INFRASTRUCTURE_NO_FILE_PATH_OR_FUNCS_FOUND,
     INFRASTRUCTURE_FX_ERROR_MESSAGE,
@@ -10,6 +12,7 @@ from infrastructure.strings import (
     INFRASTRUCTURE_COLLECTION_ONLY,
     INFRASTRUCTURE_XDIST_SLAVE,
     INFRASTRUCTURE_PLUGIN_NAME,
+    GREEN,
 )
 
 from infrastructure.function_manager import FunctionManager
@@ -21,7 +24,8 @@ def pytest_addoption(parser):
     group.addoption(
         "--infrastructure-file",
         action="store",
-        default=None,
+        type=str,
+        default="",
         help="File path to your .py file which contains infrastructure functions",
     )
     group.addoption(
@@ -83,18 +87,8 @@ class PytestValidate:
     @pytest.mark.tryfirst
     def pytest_configure(self):
         print(
-            r"""
-        **********************************************************************
-         ______                                    _         ___
-        (_____ \        _                _        | |       / __)
-         _____) )   _ _| |_ _____  ___ _| |_ _____| |____ _| |__ ____ _____
-        |  ____/ | | (_   _) ___ |/___|_   _|_____) |  _ (_   __) ___|____ |
-        | |    | |_| | | |_| ____|___ | | |_      | | | | || | | |   / ___ |
-        |_|     \__  |  \__)_____|___/   \__)     |_|_| |_||_| |_|   \_____|
-               (____/
-        **********************************************************************"""
+            f"{get_text_in_color(GREEN, '[Pytest-Infrastructure]:')} checking if plugin is permitted to run"
         )
-        print("Pytest-infrastructure is checking if it is allowed to run...")
         if not self.config.getoption("--bypass-validation"):
             self._unregister(INFRASTRUCTURE_BYPASS_PROVIDED)
             return
@@ -104,11 +98,14 @@ class PytestValidate:
         if self.config.getoption("collectonly"):
             self._unregister(INFRASTRUCTURE_COLLECTION_ONLY)
             return
-        self.collect_validate_functions()
+
+        if os.path.isfile(self.file_path):
+            self.collect_validate_functions()
 
     def collect_validate_functions(self):
         print(
-            f"Pytest-infrastructure is scanning for @infrastructure functions in {self.file_path}"
+            f"{get_text_in_color(GREEN, '[Pytest-Infrastructure]:')} plugin permitted, collecting @infrastructure"
+            f" functions now.  location to find functions was: {self.file_path}"
         )
         self.unfiltered_functions = FunctionFinder(
             self.file_path

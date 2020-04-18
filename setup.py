@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-install_requires = []
+install_requires = [""]
 
 with open("README.md") as f:
     long_description = f.read()
@@ -10,7 +10,7 @@ setup(
     license="Apache Software License 2.0",
     author="Simon Kerr",
     url="https://github.com/symonk/pytest-infrastructure",
-    version="0.0.2",
+    version="0.0.1",
     author_email="jackofspaces@gmail.com",
     maintainer="Simon Kerr",
     maintainer_email="jackofspaces@gmail.com",
