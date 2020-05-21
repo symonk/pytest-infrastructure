@@ -54,7 +54,7 @@ def pytest_configure(config):
     if disallowed:
         infra_print(f"not loaded because: {reason}")
         return
-    infra_print(f"has been successfully loaded")
+    infra_print("has been successfully loaded")
     main_plugin = PytestValidate(config)
     config.pluginmanager.register(main_plugin, main_plugin.name)
 
