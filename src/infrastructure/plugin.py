@@ -3,8 +3,8 @@ import os
 
 import pytest
 from infrastructure.exceptions import ValidationFixtureException
-from infrastructure.function_finder import FunctionFinder
 from infrastructure.plugin_utilities import get_text_in_color
+from infrastructure.function_finder import FunctionFinder
 from infrastructure.strings import (
     INFRASTRUCTURE_NO_FILE_PATH_OR_FUNCS_FOUND,
     INFRASTRUCTURE_FX_ERROR_MESSAGE,
@@ -85,6 +85,7 @@ class PytestValidate:
         self.thread_count = config.getoption("--infrastructure-thread-count")
 
     @pytest.mark.tryfirst
+    @pytest.mark.historic
     def pytest_configure(self):
         print(
             f"{get_text_in_color(GREEN, '[Pytest-Infrastructure]:')} checking if plugin is permitted to run"
@@ -105,7 +106,7 @@ class PytestValidate:
     def collect_validate_functions(self):
         print(
             f"{get_text_in_color(GREEN, '[Pytest-Infrastructure]:')} plugin permitted, collecting @infrastructure"
-            f" functions now.  location to find functions was: {self.file_path}"
+            " functions now.  location to find functions was: {self.file_path}"
         )
         self.unfiltered_functions = FunctionFinder(
             self.file_path
@@ -130,7 +131,7 @@ class PytestValidate:
 
     def _is_xdist_slave(self) -> bool:
         """
-        xdist compatability checks; only register the plugin on the master node when xdist is involved
+        xdist compatbility checks; only register the plugin on the master node when xdist is involved
         n.b -> worker / slaveinput should NOT run this plugin, this checks for xdist enablement and acts accordingly
         :return: a boolean indicating if the current invokation of pytest is on an xdist slave
         """

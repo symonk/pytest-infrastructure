@@ -27,13 +27,13 @@ class FunctionManager:
         self._remove_non_environmentally_friendly_functions()
         self._order_usable_functions()
         print(
-            f"pytest-infrastructure will attempt to execute the following functions sequentially:"
+            "pytest-infrastructure will attempt to execute the following functions sequentially:"
         )
         for fx in self.isolated_functions:
             print(f"function: {fx.meta_data}")
 
         print(
-            f"pytest-infrastructure will attempt to execute the following functions in parallel:"
+            "pytest-infrastructure will attempt to execute the following functions in parallel:"
         )
         for fx in self.parallel_functions:
             print(f"function: {fx.meta_data}")
@@ -43,7 +43,7 @@ class FunctionManager:
         Given an appropriate environment and functions enabled= state; remove them completely from runnable functions
         """
         print(
-            f"pytest-infrastructure is disabling functions from executing where appropriate"
+            "pytest-infrastructure is disabling functions from executing where appropriate"
         )
 
         for fx in self.unfiltered_functions:
@@ -55,7 +55,7 @@ class FunctionManager:
                 self.disabled_functions.append(fx)
                 print(
                     f"function {fx.meta_data.name} was disabled due to enabled=False or not_on_env not succesful "
-                    f"meta data of the function was: {fx.meta_data} and environment was: {self.environment}"
+                    "meta data of the function was: {fx.meta_data} and environment was: {self.environment}"
                 )
             else:
                 self.filtered_functions.append(fx)
@@ -81,20 +81,20 @@ class FunctionManager:
         all ran together
         """
         if self.isolated_functions:
-            print(f"reshuffling order to detect any negatively ordered functions")
+            print("reshuffling order to detect any negatively ordered functions")
             for fx in self.isolated_functions:
                 if fx.meta_data.order < 0:
                     fx.meta_data.order = 0
 
             print(
                 f"current order of functions collected is {[fx.meta_data.order for fx in self.isolated_functions]}"
-                f"pytest-infrastructure is applying execution order now...."
+                "pytest-infrastructure is applying execution order now...."
             )
             self.isolated_functions.sort(
                 key=lambda func_dataclass: func_dataclass.meta_data.order
             )
             print(
-                f"functions have been sorted, execution for isolated functions is as follows:"
+                "functions have been sorted, execution for isolated functions is as follows:"
             )
             for fx in self.isolated_functions:
                 print(
