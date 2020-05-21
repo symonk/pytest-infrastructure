@@ -1,3 +1,5 @@
 from colorama import init
+from os import name
 
-init(convert=True)
+if name.lower() == "windows":
+    init(convert=True)
