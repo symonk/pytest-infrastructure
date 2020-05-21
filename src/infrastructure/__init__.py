@@ -1,5 +1,5 @@
 from colorama import init
 from os import name
 
-if name.lower() == "windows":
+if name == "nt":
     init(convert=True)
