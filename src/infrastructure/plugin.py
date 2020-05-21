@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 import os
+from dataclasses import dataclass
 
 import pytest
 from infrastructure.exceptions import ValidationFixtureException
 from infrastructure.plugin_utilities import get_text_in_color
+from infrastructure.plugin_utilities import is_xdist_slave
 from infrastructure.function_finder import FunctionFinder
 from infrastructure.strings import (
     INFRASTRUCTURE_NO_FILE_PATH_OR_FUNCS_FOUND,
     INFRASTRUCTURE_FX_ERROR_MESSAGE,
-    INFRASTRUCTURE_BYPASS_PROVIDED,
-    INFRASTRUCTURE_COLLECTION_ONLY,
-    INFRASTRUCTURE_XDIST_SLAVE,
     INFRASTRUCTURE_PLUGIN_NAME,
     GREEN,
 )
@@ -30,7 +29,7 @@ def pytest_addoption(parser):
     )
     group.addoption(
         "--bypass-validation",
-        action="store_false",
+        action="store_true",
         help="Bypass the validation functions and execute testing without checking, disable the plugin completely",
     )
     group.addoption(
@@ -51,8 +50,59 @@ def pytest_addoption(parser):
 
 @pytest.mark.tryfirst
 def pytest_configure(config):
+    print(
+        f"{get_text_in_color(GREEN, '[Pytest-Infrastructure]:')} detected... scanning for disabling flags"
+    )
+    disallowed, reason = _is_unsafe_to_register(config)
+    if disallowed:
+        print(
+            f"{get_text_in_color(GREEN, '[Pytest-Infrastructure]:')} not loaded because: {reason}"
+        )
+        return
     main_plugin = PytestValidate(config)
     config.pluginmanager.register(main_plugin, main_plugin.name)
+
+
+@dataclass(repr=True)
+class ReasonContainer:
+    collect_only: bool
+    pytest_help: bool
+    xdist_slave: bool
+    bypass_provided: bool
+
+    def disallowed(self) -> tuple:
+        """
+        Check if any of the checks have been met in order to not register the plugin
+        Any one of these is valid enough that the plugin should NOT be loaded.
+        In the instance where the checks fail, it will provide a nice message to stdout to explain why
+        :return: a boolean indicating the state
+        """
+        return (
+            any(
+                (
+                    self.collect_only,
+                    self.pytest_help,
+                    self.xdist_slave,
+                    self.bypass_provided,
+                )
+            ),
+            repr(self),
+        )
+
+
+def _is_unsafe_to_register(config) -> tuple:
+    """
+    Return a boolean value indicating if the plugin should be registered or not.
+    :param config: the pytest config object
+    :return: boolean if the plugin should be registered or not
+    """
+    collect_only = config.getoption("collectonly")
+    pytest_help = config.getoption("help")
+    xdist_slave = is_xdist_slave(config)
+    bypass_provided = config.getoption("--bypass-validation")
+    return ReasonContainer(
+        collect_only, pytest_help, xdist_slave, bypass_provided
+    ).disallowed()
 
 
 @pytest.fixture
@@ -87,19 +137,6 @@ class PytestValidate:
     @pytest.mark.tryfirst
     @pytest.mark.historic
     def pytest_configure(self):
-        print(
-            f"{get_text_in_color(GREEN, '[Pytest-Infrastructure]:')} checking if plugin is permitted to run"
-        )
-        if not self.config.getoption("--bypass-validation"):
-            self._unregister(INFRASTRUCTURE_BYPASS_PROVIDED)
-            return
-        if self._is_xdist_slave():
-            self._unregister(INFRASTRUCTURE_XDIST_SLAVE)
-            return
-        if self.config.getoption("collectonly"):
-            self._unregister(INFRASTRUCTURE_COLLECTION_ONLY)
-            return
-
         if os.path.isfile(self.file_path):
             self.collect_validate_functions()
 
@@ -128,15 +165,3 @@ class PytestValidate:
         )
         scheduler.execute_functions()
         scheduler.report_summary()
-
-    def _is_xdist_slave(self) -> bool:
-        """
-        xdist compatbility checks; only register the plugin on the master node when xdist is involved
-        n.b -> worker / slaveinput should NOT run this plugin, this checks for xdist enablement and acts accordingly
-        :return: a boolean indicating if the current invokation of pytest is on an xdist slave
-        """
-        return hasattr(self.config, "slaveinput")
-
-    def _unregister(self, reason: str):
-        print(f"pytest-infrastructure will unregister the plugin because: {reason}")
-        self.config.pluginmanager.unregister(self, self.name)

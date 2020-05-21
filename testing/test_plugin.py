@@ -113,6 +113,6 @@ def test_collect_only_unregistered(testdir):
     result = testdir.runpytest("--collect-only")
     result.stdout.fnmatch_lines(
         [
-            "*pytest-infrastructure will unregister the plugin because: --collect-only was *"
+            "*ReasonContainer(collect_only=True, pytest_help=False, xdist_slave=False, bypass_provided=False)*"
         ]
     )
