@@ -1,4 +1,7 @@
+import os
+
 from colorama import Fore
+from infrastructure.strings import GREEN
 
 
 def print_in_color(color, message) -> None:
@@ -27,3 +30,14 @@ def is_xdist_slave(config) -> bool:
     :return: a boolean indicating if the current invokation of pytest is on an xdist slave
     """
     return hasattr(config, "slaveinput")
+
+
+def get_worker_id() -> str:
+    return os.environ.get("PYTEST_XDIST_WORKER ", "Master")
+
+
+def infra_print(message: str, color: str = GREEN) -> None:
+    print(
+        f"{get_worker_id()} - [pytest-infrastructure] {get_text_in_color(color, message)}",
+        flush=True,
+    )

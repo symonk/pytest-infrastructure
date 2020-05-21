@@ -105,9 +105,8 @@ def test_plugin_summary(testdir):
 def test_collect_only_unregistered(testdir):
     testdir.makepyfile(
         """
-        def test_can_collect_validate_functions():
+        def test_dummy():
             pass
-
     """
     )
     result = testdir.runpytest("--collect-only")
@@ -116,3 +115,17 @@ def test_collect_only_unregistered(testdir):
             "*ReasonContainer(collect_only=True, pytest_help=False, xdist_slave=False, bypass_provided=False)*"
         ]
     )
+
+
+def test_pytest_xdist_slave_unregistered(testdir, valid_file_one_func):
+    testdir.makepyfile(
+        """
+        import pytest
+        @pytest.mark.parametrize("num", range(20))
+        def test_paramed_data(request, num):
+            plugin = request.config.pluginmanager.get_plugin('pytest_infrastructure')
+            assert plugin is None
+    """
+    )
+    result = testdir.runpytest("--infrastructure-file", valid_file_one_func, "-n=4")
+    assert result.ret == 0

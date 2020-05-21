@@ -1,4 +1,5 @@
 from typing import Tuple, List, Optional
+from infrastructure.plugin_utilities import infra_print
 
 
 class FunctionManager:
@@ -26,26 +27,23 @@ class FunctionManager:
         self._manage_function_disablement()
         self._remove_non_environmentally_friendly_functions()
         self._order_usable_functions()
-        print(
-            "pytest-infrastructure will attempt to execute the following functions sequentially:"
-        )
-        for fx in self.isolated_functions:
-            print(f"function: {fx.meta_data}")
 
-        print(
-            "pytest-infrastructure will attempt to execute the following functions in parallel:"
-        )
-        for fx in self.parallel_functions:
-            print(f"function: {fx.meta_data}")
+        if self.isolated_functions:
+            for fx in self.isolated_functions:
+                infra_print(f"sequential function => {fx.meta_data}")
+        else:
+            infra_print("no sequential functions collected")
+
+        if self.parallel_functions:
+            for fx in self.parallel_functions:
+                infra_print(f"parallel function => {fx.meta_data}")
+        else:
+            infra_print("no parallel functions collected")
 
     def _manage_function_disablement(self):
         """
         Given an appropriate environment and functions enabled= state; remove them completely from runnable functions
         """
-        print(
-            "pytest-infrastructure is disabling functions from executing where appropriate"
-        )
-
         for fx in self.unfiltered_functions:
             if not fx.meta_data.enabled or (
                 fx.meta_data.not_on_env
@@ -53,16 +51,17 @@ class FunctionManager:
                 not in [env.lower() for env in fx.meta_data.not_on_env]
             ):
                 self.disabled_functions.append(fx)
-                print(
-                    f"function {fx.meta_data.name} was disabled due to enabled=False or not_on_env not succesful "
-                    "meta data of the function was: {fx.meta_data} and environment was: {self.environment}"
+                infra_print(
+                    f"function {fx.meta_data.name} was disabled due to enabled=False or not_on_env not successful "
+                    f"meta data of the function was: {fx.meta_data} and environment was: {self.environment}"
                 )
             else:
                 self.filtered_functions.append(fx)
 
-        print(
-            f"pytest-validate has deregistered a total of len{self.disabled_functions} functions"
-        )
+        if self.disabled_functions:
+            infra_print(f"deregistering: {len(self.disabled_functions)} functions")
+        else:
+            infra_print("no disabled functions to deregister")
 
     def _remove_non_environmentally_friendly_functions(self):
         """
@@ -81,19 +80,19 @@ class FunctionManager:
         all ran together
         """
         if self.isolated_functions:
-            print("reshuffling order to detect any negatively ordered functions")
+            infra_print("reshuffling order to detect any negatively ordered functions")
             for fx in self.isolated_functions:
                 if fx.meta_data.order < 0:
                     fx.meta_data.order = 0
 
-            print(
+            infra_print(
                 f"current order of functions collected is {[fx.meta_data.order for fx in self.isolated_functions]}"
                 "pytest-infrastructure is applying execution order now...."
             )
             self.isolated_functions.sort(
                 key=lambda func_dataclass: func_dataclass.meta_data.order
             )
-            print(
+            infra_print(
                 "functions have been sorted, execution for isolated functions is as follows:"
             )
             for fx in self.isolated_functions:

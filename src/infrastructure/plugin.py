@@ -4,14 +4,13 @@ from dataclasses import dataclass
 
 import pytest
 from infrastructure.exceptions import ValidationFixtureException
-from infrastructure.plugin_utilities import get_text_in_color
 from infrastructure.plugin_utilities import is_xdist_slave
+from infrastructure.plugin_utilities import infra_print
 from infrastructure.function_finder import FunctionFinder
 from infrastructure.strings import (
     INFRASTRUCTURE_NO_FILE_PATH_OR_FUNCS_FOUND,
     INFRASTRUCTURE_FX_ERROR_MESSAGE,
     INFRASTRUCTURE_PLUGIN_NAME,
-    GREEN,
 )
 
 from infrastructure.function_manager import FunctionManager
@@ -50,15 +49,12 @@ def pytest_addoption(parser):
 
 @pytest.mark.tryfirst
 def pytest_configure(config):
-    print(
-        f"{get_text_in_color(GREEN, '[Pytest-Infrastructure]:')} detected... scanning for disabling flags"
-    )
+    infra_print("welcome to pytest-infrastructure... scanning for disabling flags")
     disallowed, reason = _is_unsafe_to_register(config)
     if disallowed:
-        print(
-            f"{get_text_in_color(GREEN, '[Pytest-Infrastructure]:')} not loaded because: {reason}"
-        )
+        infra_print(f"not loaded because: {reason}")
         return
+    infra_print(f"has been successfully loaded")
     main_plugin = PytestValidate(config)
     config.pluginmanager.register(main_plugin, main_plugin.name)
 
@@ -141,9 +137,9 @@ class PytestValidate:
             self.collect_validate_functions()
 
     def collect_validate_functions(self):
-        print(
-            f"{get_text_in_color(GREEN, '[Pytest-Infrastructure]:')} plugin permitted, collecting @infrastructure"
-            " functions now.  location to find functions was: {self.file_path}"
+        infra_print(
+            "plugin permitted, collecting @infrastructure "
+            f"functions now.  location to find functions was: {self.file_path}"
         )
         self.unfiltered_functions = FunctionFinder(
             self.file_path
