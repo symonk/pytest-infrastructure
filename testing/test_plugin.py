@@ -129,3 +129,15 @@ def test_pytest_xdist_slave_unregistered(testdir, valid_file_one_func):
     )
     result = testdir.runpytest("--infrastructure-file", valid_file_one_func, "-n=4")
     assert result.ret == 0
+
+
+def test_duplicate_function_collection(testdir):
+    testdir.makepyfile(
+        """
+        def test_dummy():
+            pass
+        """
+    )
+    file = get_path_to_test_file('duplicate_validation_functions.py')
+    result = testdir.runpytest('--infrastructure-file', file, '-v')
+    a = 1

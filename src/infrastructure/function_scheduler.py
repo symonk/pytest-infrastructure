@@ -62,19 +62,15 @@ class FunctionScheduler:
         Responsible for taking a single function and executing it
         note: this is not responsible for thread management, this is done prior and dispatched to this function
         """
-        infra_print("executing a function!")
         current_thread().name = f"{fx.meta_data.name}"
         scheduled = partial(ScheduledResult, fx)
-        with yaspin() as spinner:
-            try:
-                fx()
-                self.results.append(scheduled())
-                spinner.ok("passed")
-            except Exception as ex:  # noqa
-                self.results.append(
-                    scheduled(exc_type=type(ex), exc_info=(ex, traceback.format_exc()))
-                )
-                spinner.fail("failed")
+        try:
+            fx()
+            self.results.append(scheduled())
+        except Exception as ex:  # noqa
+            self.results.append(
+                scheduled(exc_type=type(ex), exc_info=(ex, traceback.format_exc()))
+            )
 
     def execute_parallel_functions(self, fxs):
         """
