@@ -30,7 +30,7 @@ def some_other_function_to_validate_the_stack():
 ```
 
 ```bash
-pytest -m my_test_marker --infrastructure-file=verification.py --infrastructure-env='staging' --infrastructure-thread-count=2
+pytest -m my_test_marker --infrastructure-env='staging' --infrastructure-thread-count=2
 ```
 
 ---
