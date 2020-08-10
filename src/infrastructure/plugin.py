@@ -6,12 +6,9 @@ import pytest
 from infrastructure.exceptions import ValidationFixtureException
 from infrastructure.plugin_utilities import is_xdist_slave
 from infrastructure.plugin_utilities import infra_print
-from infrastructure.function_finder import FunctionFinder
-from infrastructure.strings import (
-    INFRASTRUCTURE_NO_FILE_PATH_OR_FUNCS_FOUND,
-    INFRASTRUCTURE_FX_ERROR_MESSAGE,
-    INFRASTRUCTURE_PLUGIN_NAME,
-)
+from infrastructure.strings import INFRASTRUCTURE_FX_ERROR_MESSAGE
+from infrastructure.strings import INFRASTRUCTURE_PLUGIN_NAME
+from infrastructure import INFRASTRUCTURE_FUNCTIONS
 
 from infrastructure.function_manager import FunctionManager
 from infrastructure.function_scheduler import FunctionScheduler
@@ -19,13 +16,6 @@ from infrastructure.function_scheduler import FunctionScheduler
 
 def pytest_addoption(parser):
     group = parser.getgroup(INFRASTRUCTURE_PLUGIN_NAME)
-    group.addoption(
-        "--infrastructure-file",
-        action="store",
-        type=str,
-        default="",
-        help="File path to your .py file which contains infrastructure functions",
-    )
     group.addoption(
         "--bypass-validation",
         action="store_true",
@@ -101,21 +91,6 @@ def _is_unsafe_to_register(config) -> tuple:
     ).disallowed()
 
 
-@pytest.fixture
-def validation_file(request):
-    """
-    Function scoped fixture to return the file path (if specified at runtime to --validation-file=
-    If no file path is passed and this fixture has attempted use we will raise an exception, failing the test
-    :param request: the dependency injected pytest request fixture
-    :return: Optional[FileLike]
-    """
-    validation_file = request.config.getoption("--infrastructure-file")
-    if validation_file:
-        return validation_file
-    else:
-        raise ValidationFixtureException(INFRASTRUCTURE_FX_ERROR_MESSAGE)
-
-
 class PytestValidate:
     """
     The pytest infrastructure plugin object;
@@ -125,36 +100,24 @@ class PytestValidate:
     def __init__(self, config):
         self.config = config
         self.name = "pytest_infrastructure"
-        self.unfiltered_functions = None
-        self.file_path = self.config.getoption("--infrastructure-file")
+        self.functions = None
         self.environment = config.getoption("--infrastructure-env")
         self.thread_count = config.getoption("--infrastructure-thread-count")
-
-    @pytest.mark.tryfirst
-    @pytest.mark.historic
-    def pytest_configure(self):
-        if os.path.isfile(self.file_path):
-            self.collect_validate_functions()
 
     def collect_validate_functions(self):
         infra_print(
             "plugin permitted, collecting @infrastructure "
-            f"functions now.  location to find functions was: {self.file_path}"
+            f"functions now..."
         )
-        self.unfiltered_functions = FunctionFinder(
-            self.file_path
-        ).gather_infrastructure_functions()
-        if not self.unfiltered_functions:
-            self._unregister(INFRASTRUCTURE_NO_FILE_PATH_OR_FUNCS_FOUND)
-        else:
-            self.validate()
+        self.functions = INFRASTRUCTURE_FUNCTIONS
+        self.validate()
 
     def validate(self) -> None:
         """
         This is validates bread and butter; it is responsible for executing the functions in a controlled fashion
         in-line with the meta data of the particular function(s)
         """
-        manager = FunctionManager(self.unfiltered_functions, self.environment)
+        manager = FunctionManager(self.functions, self.environment)
         manager.organize_functions()
         scheduler = FunctionScheduler(
             (manager.isolated_functions, manager.parallel_functions), self.thread_count

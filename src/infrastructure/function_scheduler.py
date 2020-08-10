@@ -10,8 +10,6 @@ from threading import current_thread
 from types import FunctionType
 from typing import Any
 
-from yaspin import yaspin
-
 
 @dataclass
 class ScheduledResult:

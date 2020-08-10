@@ -2,6 +2,8 @@ from functools import wraps
 from typing import List
 from dataclasses import dataclass, field
 
+INFRASTRUCTURE_FUNCTIONS = []
+
 
 @dataclass(repr=True)
 class InfrastructureMeta:
@@ -27,6 +29,7 @@ def infrastructure(
             isolated=isolated,
             name=func.__name__,
         )
+        INFRASTRUCTURE_FUNCTIONS.append(func)
 
         @wraps(func)
         def wrapper(*args, **kwargs):
