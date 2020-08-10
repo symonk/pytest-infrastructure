@@ -34,3 +34,4 @@ pytestdebug.log
 .idea/
 docs/_build*
 *.log
+*.venv
