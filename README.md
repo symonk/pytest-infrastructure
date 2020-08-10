@@ -14,7 +14,6 @@ pytest-infrastructure is a pytest (pluggy) plugin that is used to verify the inf
 It is very simple, do the following:
 
 ```python
-# verifications.py
 from pytest_infrastructure import infrastructure
 
 @infrastructure(order=1, enabled=True, not_on_env='staging', isolated=True)
