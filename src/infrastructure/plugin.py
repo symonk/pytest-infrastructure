@@ -1,94 +1,58 @@
 # -*- coding: utf-8 -*-
-import os
+import functools
 from dataclasses import dataclass
+from typing import List, Set, Optional, Callable
 
 import pytest
-from infrastructure.exceptions import ValidationFixtureException
-from infrastructure.plugin_utilities import is_xdist_slave
-from infrastructure.plugin_utilities import infra_print
-from infrastructure.strings import INFRASTRUCTURE_FX_ERROR_MESSAGE
-from infrastructure.strings import INFRASTRUCTURE_PLUGIN_NAME
-from infrastructure import INFRASTRUCTURE_FUNCTIONS
+from _pytest.config import PytestPluginManager
 
-from infrastructure.function_manager import FunctionManager
-from infrastructure.function_scheduler import FunctionScheduler
+from infrastructure.plugin_utilities import can_plugin_be_registered
+from infrastructure.strings import INFRASTRUCTURE_PLUGIN_NAME
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def pytest_addoption(parser):
     group = parser.getgroup(INFRASTRUCTURE_PLUGIN_NAME)
     group.addoption(
-        "--bypass-validation",
+        "--skip-infra",
         action="store_true",
+        default=False,
+        dest="skip_infra",
         help="Bypass the validation functions and execute testing without checking, disable the plugin completely",
     )
     group.addoption(
-        "--infrastructure-thread-count",
+        "--infra-thread-count",
         action="store",
         type=int,
         default=2,
+        dest="infra_thread_count",
         help="If specified will use threads to execute infrastructure threads in parallel",
     )
     group.addoption(
-        "--infrastructure-env",
+        "--infra-env",
         action="store",
         type=list,
+        dest="infra_env",
         help="Runtime environment; only_on_env= of validation functions will account for this"
         "Note: if not specified, all infrastructure functions will be executed.",
     )
 
 
-@pytest.mark.tryfirst
+@pytest.hookimpl
+def pytest_addhooks(pluginmanager: PytestPluginManager) -> None:
+    from infrastructure.hookspecs import InfrastructureHookSpecs
+
+    pluginmanager.add_hookspecs(InfrastructureHookSpecs)
+
+
+@pytest.hookimpl(tryfirst=True)
 def pytest_configure(config):
-    infra_print("welcome to pytest-infrastructure... scanning for disabling flags")
-    disallowed, reason = _is_unsafe_to_register(config)
-    if disallowed:
-        infra_print(f"not loaded because: {reason}")
-        return
-    infra_print("has been successfully loaded")
-    main_plugin = PytestValidate(config)
-    config.pluginmanager.register(main_plugin, main_plugin.name)
-
-
-@dataclass(repr=True)
-class ReasonContainer:
-    collect_only: bool
-    pytest_help: bool
-    xdist_slave: bool
-    bypass_provided: bool
-
-    def disallowed(self) -> tuple:
-        """
-        Check if any of the checks have been met in order to not register the plugin
-        Any one of these is valid enough that the plugin should NOT be loaded.
-        In the instance where the checks fail, it will provide a nice message to stdout to explain why
-        :return: a boolean indicating the state
-        """
-        return (
-            any(
-                (
-                    self.collect_only,
-                    self.pytest_help,
-                    self.xdist_slave,
-                    self.bypass_provided,
-                )
-            ),
-            repr(self),
-        )
-
-
-def _is_unsafe_to_register(config) -> tuple:
-    """
-    Return a boolean value indicating if the plugin should be registered or not.
-    :param config: the pytest config object
-    :return: boolean if the plugin should be registered or not
-    """
-    collect_only = config.getoption("collectonly")
-    pytest_help = config.getoption("help")
-    xdist_slave = is_xdist_slave(config)
-    bypass_provided = config.getoption("--bypass-validation")
-    return ReasonContainer(
-        collect_only, pytest_help, xdist_slave, bypass_provided
-    ).disallowed()
+    if can_plugin_be_registered(config):
+        config.pluginmanager.register(PytestValidate(config), "pytest-infrastructure")
+        functions = config.pluginmanager.hook.pytest_infrastructure_collect()
+        config.pluginmanager.hook.pytest_infrastructure_validate(functions=functions)
 
 
 class PytestValidate:
@@ -97,30 +61,55 @@ class PytestValidate:
     This plugin is only registered if the --bypass-infrastructure arg is not provided, else it is completely skipped!
     """
 
+    infrastructure_functions: List[Callable] = []
+
     def __init__(self, config):
         self.config = config
-        self.name = "pytest_infrastructure"
         self.functions = None
-        self.environment = config.getoption("--infrastructure-env")
-        self.thread_count = config.getoption("--infrastructure-thread-count")
+        self.environment = config.getoption("infra_env")
+        self.thread_count = config.getoption("infra_thread_count")
 
-    def collect_validate_functions(self):
-        infra_print(
-            "plugin permitted, collecting @infrastructure "
-            f"functions now..."
-        )
-        self.functions = INFRASTRUCTURE_FUNCTIONS
-        self.validate()
+    @pytest.hookimpl
+    def infrastructure_collect(self) -> List[Callable]:
+        ...
 
-    def validate(self) -> None:
-        """
-        This is validates bread and butter; it is responsible for executing the functions in a controlled fashion
-        in-line with the meta data of the particular function(s)
-        """
-        manager = FunctionManager(self.functions, self.environment)
-        manager.organize_functions()
-        scheduler = FunctionScheduler(
-            (manager.isolated_functions, manager.parallel_functions), self.thread_count
-        )
-        scheduler.execute_functions()
-        scheduler.report_summary()
+    @pytest.hookimpl
+    def infrastructure_validate(self, functions: List[Callable]) -> None:
+        ...
+
+
+@dataclass(frozen=True, repr=True)
+class InfraArgs:
+    """
+    Simple argument class that should be provided to the @infrastructure decorator.
+    for example:
+        @infrastructure(InfraArgs(order=10, active=False, ignored_on_env={'staging'}, isolated=True)
+        def some_function() -> None:
+            ...
+        order: A 'priority' indicator, where lower is higher priority.
+        active: If the decorated function is applicable for collection & execution
+        ignored_on_env: Set of environments that the function will not be validated again (--infra-env)
+        isolated: If the function should be sequentially run (after threaded functions) in isolation.
+    """
+
+    order: int = 0
+    active: bool = True
+    ignored_on_env: Optional[Set[str]] = None
+    isolated: bool = False
+
+
+def infrastructure(infra_args: InfraArgs):
+    """
+    Bread and button of pytest-infrastructure.  Stores implementations of the decorator globally
+    which are then available to the PytestValidate plugin to invoke and apply its custom logic to the pytest run.
+    """
+
+    def decorator(func):
+        PytestValidate.infrastructure_functions.append(func)
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            func(*args, **kwargs)
+            return wrapper
+
+        return decorator

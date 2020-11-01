@@ -1,43 +1,30 @@
-import os
-
-from colorama import Fore
-from infrastructure.strings import GREEN
+from _pytest.config import Config
 
 
-def print_in_color(color, message) -> None:
+def is_xdist_worker(config: Config) -> bool:
     """
-    Print to stdout directly a coloured message
-    :param color: the color that should be returned
-    :param message: the message to encapsulate
+    xdist worker check, the plugin workload is only carried out by the master process, this means:
+    1) The initial process when running without xdist (-n)
+    2) The master process (not a spawned execnet gateway worker node
     """
-    print(get_text_in_color(color, message))
+    return hasattr(config, "workerinput")
 
 
-def get_text_in_color(color, message) -> str:
+def can_plugin_be_registered(config: Config) -> bool:
     """
-    Get text in a particular color, used for pretty printing to standard out
-    :param color: the color that should be returned
-    :param message: the message to encapsulate
-    :return: a string of the coloured message
+    Bundled checks for deciding if registering the plugin is sufficient.
+    Accounts for the following:
+
+     - is the --skip-infra CLI option provided
+     - is the -h pytest help option provided
+     - is pytest running in --co / --collect-only mode
+     - is the executing process the true 'master' under both sequential & distributed setups.
+
+     :param config: The pytest config object.
+     :returns: A boolean indicating if the plugin should be registered or not.
     """
-    return f"{getattr(Fore, color.upper())} {message} {Fore.RESET}"
-
-
-def is_xdist_slave(config) -> bool:
-    """
-    xdist compatbility checks; only register the plugin on the master node when xdist is involved
-    n.b -> worker / slaveinput should NOT run this plugin, this checks for xdist enablement and acts accordingly
-    :return: a boolean indicating if the current invokation of pytest is on an xdist slave
-    """
-    return hasattr(config, "slaveinput")
-
-
-def get_worker_id() -> str:
-    return os.environ.get("PYTEST_XDIST_WORKER ", "Master")
-
-
-def infra_print(message: str, color: str = GREEN) -> None:
-    print(
-        f"{get_worker_id()} - [pytest-infrastructure] {get_text_in_color(color, message)}",
-        flush=True,
-    )
+    do_not_skip = not config.getoption("skip_infra")
+    not_collect_only = not config.getoption("collectonly")
+    not_pytest_help = not config.getoption("help")
+    is_master = not is_xdist_worker(config)
+    return all((do_not_skip, not_collect_only, not_pytest_help, is_master))
