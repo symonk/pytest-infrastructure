@@ -15,16 +15,15 @@ It is very simple, do the following:
 
 ```python
 from pytest_infrastructure import infrastructure
-from pytest_infrastructure import InfraArgs
 
-@infrastructure(InfraArgs(order=1, enabled=True, not_on_env='staging', isolated=True))
+@infrastructure(order=1, enabled=True, not_on_env='staging', isolated=True)
 def some_function_to_validate_the_stack():
     # This will be run in parallel; order plays no part when isolated=True is set
     # This will be executed first, order=1
     # (n.b => order 0 is considered priority and negative order is equal to 0)
 
 
-@infrastructure(InfraArgs(enabled=True, not_on_env='production', isolated=False))
+@infrastructure(enabled=True, not_on_env='production', isolated=False)
 def some_other_function_to_validate_the_stack():
     # This will be run sequentially in parallel
     # This will fail our checks due to Exception
