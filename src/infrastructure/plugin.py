@@ -61,7 +61,7 @@ class PytestValidate:
     This plugin is only registered if the --bypass-infrastructure arg is not provided, else it is completely skipped!
     """
 
-    infrastructure_functions: List[Callable] = []
+    _infrastructure_functions: List[Callable] = []
 
     def __init__(self, config):
         self.config = config
@@ -70,46 +70,30 @@ class PytestValidate:
         self.thread_count = config.getoption("infra_thread_count")
 
     @pytest.hookimpl
-    def infrastructure_collect(self) -> List[Callable]:
-        ...
+    def pytest_infrastructure_collect(self) -> List[Callable]:
+        a = 2
+        b = 4
 
     @pytest.hookimpl
-    def infrastructure_validate(self, functions: List[Callable]) -> None:
+    def pytest_infrastructure_validate(self, functions: List[Callable]) -> None:
         ...
 
-
-@dataclass(frozen=True, repr=True)
-class InfraArgs:
-    """
-    Simple argument class that should be provided to the @infrastructure decorator.
-    for example:
-        @infrastructure(InfraArgs(order=10, active=False, ignored_on_env={'staging'}, isolated=True)
-        def some_function() -> None:
-            ...
-        order: A 'priority' indicator, where lower is higher priority.
-        active: If the decorated function is applicable for collection & execution
-        ignored_on_env: Set of environments that the function will not be validated again (--infra-env)
-        isolated: If the function should be sequentially run (after threaded functions) in isolation.
-    """
-
-    order: int = 0
-    active: bool = True
-    ignored_on_env: Optional[Set[str]] = None
-    isolated: bool = False
+    @pytest.fixture
+    def infrastructure_funcs(self) -> List[Callable]:
+        return self._infrastructure_functions
 
 
-def infrastructure(infra_args: InfraArgs):
+def infrastructure(order: int = 0, active: bool = True, ignored_on_env: Optional[Set[str]] = None, isolated: bool = False):
     """
     Bread and button of pytest-infrastructure.  Stores implementations of the decorator globally
     which are then available to the PytestValidate plugin to invoke and apply its custom logic to the pytest run.
     """
-
     def decorator(func):
-        PytestValidate.infrastructure_functions.append(func)
+        PytestValidate._infrastructure_functions.append(func)
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            func(*args, **kwargs)
-            return wrapper
-
-        return decorator
+            result = func(*args, **kwargs)
+            return result
+        return wrapper
+    return decorator
