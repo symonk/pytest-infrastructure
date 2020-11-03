@@ -50,8 +50,8 @@ def pytest_addhooks(pluginmanager: PytestPluginManager) -> None:
 def pytest_configure(config):
     if can_plugin_be_registered(config):
         infra_plugin = PytestValidate(config)
-        config.pluginmanager.register(infra_plugin, "pytest-infrastructure")
-        functions = config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems([])
+        config.pluginmanager.register(infra_plugin, INFRASTRUCTURE_PLUGIN_NAME)
+        functions = config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(items=[])
         infra_plugin.validate_infrastructure(functions)
 
 
@@ -70,7 +70,7 @@ class PytestValidate:
         self.thread_count = config.getoption("infra_thread_count")
 
     @pytest.hookimpl(tryfirst=True)
-    def pytest_infrastructure_collect(self, items: List[Callable]) -> None:
+    def pytest_infrastructure_collect_modifyitems(self, items: List[Callable]) -> None:
         """
         Default behaviour is to use the infrastructure functions which have been imported.
         """
