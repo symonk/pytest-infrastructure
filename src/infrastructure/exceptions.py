@@ -1,6 +1,7 @@
-class ValidationFixtureException(Exception):
+class InfrastructureException(Exception):
     """
-    Custom exception raised when attempting to use fixture of pytest-validation when no --validation-file is set
+    Custom exception to be raised to indicate a infrastructure function has failed its checks.
+    You should be explicit in such checks.
     """
 
     pass

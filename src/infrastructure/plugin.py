@@ -51,7 +51,9 @@ def pytest_configure(config):
     if can_plugin_be_registered(config):
         infra_plugin = PytestValidate(config)
         config.pluginmanager.register(infra_plugin, INFRASTRUCTURE_PLUGIN_NAME)
-        functions = config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(items=[])
+        functions = config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(
+            items=[]
+        )
         infra_plugin.validate_infrastructure(functions)
 
 

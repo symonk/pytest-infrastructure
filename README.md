@@ -11,10 +11,14 @@
 
 ## What is pytest-infrastructure? :flags:
 pytest-infrastructure is a pytest (pluggy) plugin that is used to verify the infrastructure around a test environment prior to wasting time actually executing tests against it.
-It is very simple, do the following:
+It is very simple, understanding the simple Infrastructure function protocol is key:
+
+ - Infrastructure validation functions should not return or yield.
+ - Infrastructure validation functions should raise an InfrastructureException upon failure.
 
 ```python
 from pytest_infrastructure import infrastructure
+from pytest_infrastructure import InfrastructureException
 
 @infrastructure(order=1, enabled=True, not_on_env='staging', isolated=True)
 def some_function_to_validate_the_stack():
@@ -28,7 +32,7 @@ def some_other_function_to_validate_the_stack():
     # This will be run sequentially in parallel
     # This will fail our checks due to Exception
     # and present you with a meaningful reason, aborting pytest
-    raise Exception
+    raise InfrastructureException()
 ```
 
 ```bash
