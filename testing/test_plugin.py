@@ -8,12 +8,12 @@ def test_plugin_not_registered_when_skipped(testdir: Testdir) -> None:
         """
         from infrastructure import infrastructure
         from infrastructure import PytestValidate
-        
-        
+
+
         @infrastructure(order=1)
         def infra_checks():
             print('ok')
-            
+
         def test_this(infrastructure_funcs):
             assert len(infrastructure_funcs) == 1
         """

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import functools
-from dataclasses import dataclass
 from typing import List, Set, Optional, Callable
 
 import pytest
@@ -71,8 +70,7 @@ class PytestValidate:
 
     @pytest.hookimpl
     def pytest_infrastructure_collect(self) -> List[Callable]:
-        a = 2
-        b = 4
+        ...
 
     @pytest.hookimpl
     def pytest_infrastructure_validate(self, functions: List[Callable]) -> None:
@@ -83,11 +81,17 @@ class PytestValidate:
         return self._infrastructure_functions
 
 
-def infrastructure(order: int = 0, active: bool = True, ignored_on_env: Optional[Set[str]] = None, isolated: bool = False):
+def infrastructure(
+    order: int = 0,
+    active: bool = True,
+    ignored_on_env: Optional[Set[str]] = None,
+    isolated: bool = False,
+):
     """
     Bread and button of pytest-infrastructure.  Stores implementations of the decorator globally
     which are then available to the PytestValidate plugin to invoke and apply its custom logic to the pytest run.
     """
+
     def decorator(func):
         PytestValidate._infrastructure_functions.append(func)
 
@@ -95,5 +99,7 @@ def infrastructure(order: int = 0, active: bool = True, ignored_on_env: Optional
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)
             return result
+
         return wrapper
+
     return decorator
