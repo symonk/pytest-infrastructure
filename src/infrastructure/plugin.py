@@ -5,7 +5,10 @@ from typing import List, Set, Optional
 import pytest
 from _pytest.config import PytestPluginManager, Config
 
-from infrastructure.infrastructure_functions import InfrastructureFunction
+from infrastructure.infrastructure_functions import (
+    InfrastructureFunction,
+    InfrastructureFunctionManager,
+)
 from infrastructure.plugin_utilities import can_plugin_be_registered
 from infrastructure.strings import INFRASTRUCTURE_PLUGIN_NAME
 import logging
@@ -64,7 +67,7 @@ class PytestValidate:
     This plugin is only registered if the --bypass-infrastructure arg is not provided, else it is completely skipped!
     """
 
-    _infrastructure_functions: List[InfrastructureFunction] = []
+    _infrastructure_manager: InfrastructureFunctionManager = InfrastructureFunctionManager()
 
     def __init__(self, config):
         self.config = config
@@ -79,18 +82,18 @@ class PytestValidate:
         """
         Default behaviour is to use the infrastructure functions which have been imported.
         """
-        items[:] = self._infrastructure_functions
+        items[:] = self._infrastructure_manager.get_applicable(self.environment)
 
     @classmethod
-    def register_wrapper_func(cls, wrapper_func: InfrastructureFunction) -> None:
-        cls._infrastructure_functions.append(wrapper_func)
+    def register(cls, wrapper_func: InfrastructureFunction) -> None:
+        cls._infrastructure_manager.register(wrapper_func)
 
     def validate_infrastructure(self, functions: List[InfrastructureFunction]) -> None:
         ...
 
     @pytest.fixture
     def infra_functions(self) -> List[InfrastructureFunction]:
-        return self._infrastructure_functions
+        return self._infrastructure_manager.get_applicable(self.environment)
 
     @pytest.hookimpl()
     def pytest_report_header(self, config: Config) -> str:
