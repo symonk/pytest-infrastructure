@@ -9,11 +9,14 @@ hookimpl = HookimplMarker("pytest")
 
 
 class InfrastructureHookSpecs:
-    @hookspec(firstresult=True)
-    def pytest_infrastructure_collect(self) -> List[Callable]:
+    @hookspec()
+    def pytest_infrastructure_collect_modifyitems(self, items: List[Callable]) -> None:
         """ Hook for performing the collection of infrastructure functions.
-            Implement your own hook and return the List[Callable] functions which adhere to what you desire. """
+            items should be modified in place. similar to pytest collection modifyitems.
+        """
+        ...
 
     @hookspec()
     def pytest_infrastructure_validate(self, functions: List[Callable]):
-        """ Hook for performing the execution of infrastructure functions """
+        """ Hook for performing the execution of infrastructure functions. """
+        ...

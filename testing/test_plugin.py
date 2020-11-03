@@ -14,8 +14,8 @@ def test_plugin_not_registered_when_skipped(testdir: Testdir) -> None:
         def infra_checks():
             print('ok')
 
-        def test_this(infrastructure_funcs):
-            assert len(infrastructure_funcs) == 1
+        def test_this(infra_functions):
+            assert len(infra_functions) == 1
         """
     )
     result = testdir.runpytest("-s", "--tb=long")
