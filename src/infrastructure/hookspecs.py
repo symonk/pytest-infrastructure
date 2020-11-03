@@ -15,8 +15,3 @@ class InfrastructureHookSpecs:
             items should be modified in place. similar to pytest collection modifyitems.
         """
         ...
-
-    @hookspec()
-    def pytest_infrastructure_validate(self, functions: List[Callable]):
-        """ Hook for performing the execution of infrastructure functions. """
-        ...

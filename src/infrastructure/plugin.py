@@ -49,11 +49,10 @@ def pytest_addhooks(pluginmanager: PytestPluginManager) -> None:
 @pytest.hookimpl(tryfirst=True)
 def pytest_configure(config):
     if can_plugin_be_registered(config):
-        config.pluginmanager.register(PytestValidate(config), "pytest-infrastructure")
-        functions = config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(
-            []
-        )
-        config.pluginmanager.hook.pytest_infrastructure_validate(functions=functions)
+        infra_plugin = PytestValidate(config)
+        config.pluginmanager.register(infra_plugin, "pytest-infrastructure")
+        functions = config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems([])
+        infra_plugin.validate_infrastructure(functions)
 
 
 class PytestValidate:
@@ -77,8 +76,7 @@ class PytestValidate:
         """
         items[:] = self._infrastructure_functions
 
-    @pytest.hookimpl
-    def pytest_infrastructure_validate(self, functions: List[Callable]) -> None:
+    def validate_infrastructure(self, functions: List[Callable]) -> None:
         ...
 
     @pytest.fixture
