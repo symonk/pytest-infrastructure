@@ -93,13 +93,20 @@ class PytestValidate:
 
     @pytest.fixture
     def infra_functions(self) -> List[InfrastructureFunction]:
-        return self._infrastructure_manager.get_applicable(self.environment)
+        return self._infrastructure_manager.get_squashed(self.environment)
 
     @pytest.hookimpl()
     def pytest_report_header(self, config: Config) -> str:
         if config.getoption("verbose") > 0:
             message = (
-                "".join([fx.__name__ for fx in self._infrastructure_functions])
+                "".join(
+                    [
+                        fx.__name__
+                        for fx in self._infrastructure_manager.get_squashed(
+                            self.environment
+                        )
+                    ]
+                )
                 or "In Infrastructure functions."
             )
             return message

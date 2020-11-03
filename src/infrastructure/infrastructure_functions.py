@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Callable, Optional, Set, List, Tuple
 
 
@@ -54,12 +55,16 @@ class InfrastructureFunctionManager:
     def __init__(self, infra_functions: List[InfrastructureFunction] = None):
         self.infra_functions = infra_functions or []
 
-    def register(self, infra_func: InfrastructureFunction) -> None:
+    def register(
+        self, infra_func: InfrastructureFunction
+    ) -> InfrastructureFunctionManager:
         """
         In-place sorting of the self.infra_functions automatically when registering a new one.
+        returns the manager instance for fluency.
         """
         self.infra_functions.append(infra_func)
         self.infra_functions.sort(key=lambda x: x.order)
+        return self
 
     def get_active(self, env: Optional[str]) -> List[InfrastructureFunction]:
         """
@@ -73,7 +78,7 @@ class InfrastructureFunctionManager:
         )
 
     def get_threaded(
-        self, env: Optional[str]
+        self, env: Optional[str] = None
     ) -> List[Optional[InfrastructureFunction]]:
         """
         Fetch the active functions which are not marked for isolation.
@@ -81,21 +86,21 @@ class InfrastructureFunctionManager:
         return [f for f in self.get_active(env) if not f.isolated]
 
     def get_isolated(
-        self, env: Optional[str]
+        self, env: Optional[str] = None
     ) -> List[Optional[InfrastructureFunction]]:
         """
         Fetch the active functions which are marked for isolation.
         """
         return [f for f in self.get_active(env) if f.isolated]
 
-    def get_applicable(self, env: Optional[str]) -> ALL_FUNC_TUPLE_TYPE:
+    def get_applicable(self, env: Optional[str] = None) -> ALL_FUNC_TUPLE_TYPE:
         """
         Fetch all threaded and isolated functions into a tuple which are applicable to run.
         """
         return self.get_threaded(env), self.get_isolated(env)
 
     def get_squashed(
-        self, env: Optional[str]
+        self, env: Optional[str] = None
     ) -> List[Optional[InfrastructureFunction]]:
         """
         Squash the tuple of threaded vs isolated into one single list.
