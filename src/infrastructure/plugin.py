@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import functools
-from typing import List, Set, Optional, Callable
+from typing import List, Set, Optional
 
 import pytest
 from _pytest.config import PytestPluginManager, Config
 
+from infrastructure.infrastructure_functions import InfrastructureFunction
 from infrastructure.plugin_utilities import can_plugin_be_registered
 from infrastructure.strings import INFRASTRUCTURE_PLUGIN_NAME
 import logging
@@ -63,7 +64,7 @@ class PytestValidate:
     This plugin is only registered if the --bypass-infrastructure arg is not provided, else it is completely skipped!
     """
 
-    _infrastructure_functions: List[Callable] = []
+    _infrastructure_functions: List[InfrastructureFunction] = []
 
     def __init__(self, config):
         self.config = config
@@ -72,31 +73,37 @@ class PytestValidate:
         self.thread_count = config.getoption("infra_thread_count")
 
     @pytest.hookimpl(tryfirst=True)
-    def pytest_infrastructure_collect_modifyitems(self, items: List[Callable]) -> None:
+    def pytest_infrastructure_collect_modifyitems(
+        self, items: List[InfrastructureFunction]
+    ) -> None:
         """
         Default behaviour is to use the infrastructure functions which have been imported.
         """
         items[:] = self._infrastructure_functions
 
-    def validate_infrastructure(self, functions: List[Callable]) -> None:
+    @classmethod
+    def register_wrapper_func(cls, wrapper_func: InfrastructureFunction) -> None:
+        cls._infrastructure_functions.append(wrapper_func)
+
+    def validate_infrastructure(self, functions: List[InfrastructureFunction]) -> None:
         ...
 
     @pytest.fixture
-    def infra_functions(self) -> List[Callable]:
+    def infra_functions(self) -> List[InfrastructureFunction]:
         return self._infrastructure_functions
 
     @pytest.hookimpl()
     def pytest_report_header(self, config: Config) -> str:
         if config.getoption("verbose") > 0:
-            message = "".join([fx.__name__ for fx in self._infrastructure_functions]) or "In Infrastructure functions."
+            message = (
+                "".join([fx.__name__ for fx in self._infrastructure_functions])
+                or "In Infrastructure functions."
+            )
             return message
 
 
 def infrastructure(
-    order: int = 0,
-    active: bool = True,
-    ignored_on_env: Optional[Set[str]] = None,
-    isolated: bool = False,
+    order: int = 0, ignored_envs: Optional[Set[str]] = None, isolated: bool = False
 ):
     """
     Bread and button of pytest-infrastructure.  Stores implementations of the decorator globally
@@ -104,7 +111,13 @@ def infrastructure(
     """
 
     def decorator(func):
-        PytestValidate._infrastructure_functions.append(func)
+        wrapper = InfrastructureFunction(
+            real_function=func,
+            order=order,
+            ignored_envs=ignored_envs,
+            isolated=isolated,
+        )
+        PytestValidate.register_wrapper_func(wrapper)
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
