@@ -3,7 +3,7 @@ import functools
 from typing import List, Set, Optional, Callable
 
 import pytest
-from _pytest.config import PytestPluginManager
+from _pytest.config import PytestPluginManager, Config
 
 from infrastructure.plugin_utilities import can_plugin_be_registered
 from infrastructure.strings import INFRASTRUCTURE_PLUGIN_NAME
@@ -84,6 +84,12 @@ class PytestValidate:
     @pytest.fixture
     def infra_functions(self) -> List[Callable]:
         return self._infrastructure_functions
+
+    @pytest.hookimpl()
+    def pytest_report_header(self, config: Config) -> str:
+        if config.getoption("verbose") > 0:
+            message = "".join([fx.__name__ for fx in self._infrastructure_functions]) or "In Infrastructure functions."
+            return message
 
 
 def infrastructure(
