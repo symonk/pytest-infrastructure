@@ -1,23 +1,6 @@
 from __future__ import annotations
-from typing import Callable, Optional, Set, List, Tuple
-
-
-class InfrastructureFunction:
-    def __init__(
-        self,
-        executable: Callable,
-        ignored_on: Optional[Set[str]] = None,
-        order: int = -1,
-    ):
-        self.executable = executable
-        self.ignored_on = ignored_on or set()
-        self.order = order
-        self.result = RunResult()
-
-
-class RunResult:
-    ...
-
+from typing import Optional, List, Tuple
+from . import InfrastructureFunction
 
 ALL_FUNC_TUPLE_TYPE = Tuple[
     List[Optional[InfrastructureFunction]], List[Optional[InfrastructureFunction]]

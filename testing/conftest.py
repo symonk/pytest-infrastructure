@@ -2,10 +2,9 @@ from functools import partial
 from typing import Type
 
 import pytest
-from infrastructure.infra_functions.infrastructure_functions import (
-    InfrastructureFunctionManager,
-    InfrastructureFunction,
-)
+
+from infrastructure import InfrastructureFunction
+from infrastructure.infra_functions import InfrastructureFunctionManager
 
 pytest_plugins = "pytester"
 

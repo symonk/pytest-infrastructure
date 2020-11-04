@@ -5,10 +5,8 @@ from typing import List, Set, Optional
 import pytest
 from _pytest.config import PytestPluginManager, Config
 
-from infrastructure.infra_functions.infrastructure_functions import (
-    InfrastructureFunction,
-    InfrastructureFunctionManager,
-)
+from infrastructure import InfrastructureFunction
+from infrastructure import InfrastructureFunctionManager
 from infrastructure.utils.plugin_utilities import can_plugin_be_registered
 from infrastructure.utils.constants import INFRASTRUCTURE_PLUGIN_NAME
 import logging
