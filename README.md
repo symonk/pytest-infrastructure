@@ -36,7 +36,8 @@ def this_runs_sequentially_as_first_priority():
 def some_other_function_to_validate_the_stack():
     # This by default (order=-1) will run multi-threaded upfront
     # if the --infra-env==staging then this will NOT be collected and executed
-    ...
+    # This will fail and stop the pytest run early
+    raise InfrastructureException("web gui is not reachable.")
 ```
 
 ```bash
