@@ -10,7 +10,7 @@ from infrastructure.infra_functions.infrastructure_functions import (
     InfrastructureFunctionManager,
 )
 from infrastructure.utils.plugin_utilities import can_plugin_be_registered
-from infrastructure.strings import INFRASTRUCTURE_PLUGIN_NAME
+from infrastructure.utils.constants import INFRASTRUCTURE_PLUGIN_NAME
 import logging
 
 logger = logging.getLogger(__name__)
