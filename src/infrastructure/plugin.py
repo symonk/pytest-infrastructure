@@ -120,7 +120,7 @@ def infrastructure(ignored_on: Optional[Set[str]] = None, order: int = -1):
 
     def decorator(func):
         wrapper = InfrastructureFunction(
-            executable=func, ignored_on=ignored_on, isolated=isolated
+            executable=func, ignored_on=ignored_on, order=order
         )
         PytestValidate.register(wrapper)
 
