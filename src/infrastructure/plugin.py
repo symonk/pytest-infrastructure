@@ -112,9 +112,7 @@ class PytestValidate:
             return message
 
 
-def infrastructure(
-    order: int = 0, ignored_envs: Optional[Set[str]] = None, isolated: bool = False
-):
+def infrastructure(ignored_envs: Optional[Set[str]] = None, isolated: int = -1):
     """
     Bread and button of pytest-infrastructure.  Stores implementations of the decorator globally
     which are then available to the PytestValidate plugin to invoke and apply its custom logic to the pytest run.
@@ -122,10 +120,7 @@ def infrastructure(
 
     def decorator(func):
         wrapper = InfrastructureFunction(
-            real_function=func,
-            order=order,
-            ignored_envs=ignored_envs,
-            isolated=isolated,
+            executable=func, ignored_on=ignored_envs, isolated=isolated
         )
         PytestValidate.register_wrapper_func(wrapper)
 
