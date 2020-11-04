@@ -45,7 +45,7 @@ def pytest_addoption(parser):
 
 @pytest.hookimpl
 def pytest_addhooks(pluginmanager: PytestPluginManager) -> None:
-    from infrastructure.hookspecs import InfrastructureHookSpecs
+    from infrastructure.hooks.hookspecs import InfrastructureHookSpecs
 
     pluginmanager.add_hookspecs(InfrastructureHookSpecs)
 
