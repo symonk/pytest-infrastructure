@@ -7,11 +7,11 @@ class InfrastructureFunction:
         self,
         executable: Callable,
         ignored_on: Optional[Set[str]] = None,
-        isolated: int = -1,
+        order: int = -1,
     ):
         self.executable = executable
         self.ignored_on = ignored_on or set()
-        self.isolated = isolated
+        self.order = order
         self.result = RunResult()
 
 
@@ -45,7 +45,7 @@ class InfrastructureFunctionManager:
         return self
 
     def _sort(self) -> None:
-        self.infra_functions.sort(key=lambda x: x.isolated)
+        self.infra_functions.sort(key=lambda x: x.order)
 
     def get_active(self, env: Optional[str] = None) -> List[InfrastructureFunction]:
         """
@@ -64,7 +64,7 @@ class InfrastructureFunctionManager:
         """
         Fetch the active functions which are not marked for isolation.
         """
-        return [f for f in self.get_active(env) if not f.isolated]
+        return [f for f in self.get_active(env) if f.order != -1]
 
     def get_isolated(
         self, env: Optional[str] = None
@@ -72,7 +72,7 @@ class InfrastructureFunctionManager:
         """
         Fetch the active functions which are marked for isolation.
         """
-        return [f for f in self.get_active(env) if f.isolated]
+        return [f for f in self.get_active(env) if f.order == -1]
 
     def get_applicable(self, env: Optional[str] = None) -> ALL_FUNC_TUPLE_TYPE:
         """

@@ -20,19 +20,23 @@ It is very simple, understanding the simple Infrastructure function protocol is 
 from pytest_infrastructure import infrastructure
 from pytest_infrastructure import InfrastructureException
 
-@infrastructure(order=1, enabled=True, not_on_env='staging', isolated=True)
-def some_function_to_validate_the_stack():
-    # This will be run in parallel; order plays no part when isolated=True is set
-    # This will be executed first, order=1
-    # (n.b => order 0 is considered priority and negative order is equal to 0)
+@infrastructure(order=-1)
+def this_runs_multi_threaded_upfront():
+    # order=-1 results in this function being invoked in a multi-threaded stage
+    ...
 
 
-@infrastructure(enabled=True, not_on_env='production', isolated=False)
+@infrastructure(order=0)
+def this_runs_sequentially_as_first_priority():
+    # order=0 means run sequential, but high priority
+    ...
+
+
+@infrastructure(ignored_on={"staging"})
 def some_other_function_to_validate_the_stack():
-    # This will be run sequentially in parallel
-    # This will fail our checks due to Exception
-    # and present you with a meaningful reason, aborting pytest
-    raise InfrastructureException()
+    # This by default (order=-1) will run multi-threaded upfront
+    # if the --infra-env==staging then this will NOT be collected and executed
+    ...
 ```
 
 ```bash

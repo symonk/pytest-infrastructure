@@ -4,7 +4,7 @@ def test_fetch_isolated_is_accurate(manager, dummy_callable) -> None:
 
 
 def test_non_minus_one_isolated_is_considered_threaded(manager, dummy_callable) -> None:
-    manager.register(dummy_callable(isolated=0))
+    manager.register(dummy_callable(order=0))
     assert manager.get_squashed(), manager.get_isolated() == (1, 1)
 
 
