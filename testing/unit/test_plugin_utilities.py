@@ -1,5 +1,3 @@
-from unittest.mock import Mock
-
 from _pytest.config import Config
 from _pytest.monkeypatch import MonkeyPatch
 
