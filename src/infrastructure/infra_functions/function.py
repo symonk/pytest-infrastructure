@@ -1,5 +1,7 @@
 from collections import Callable
-from typing import Optional, Set
+from typing import Optional
+from typing import Set
+
 from .run_result import RunResult
 
 

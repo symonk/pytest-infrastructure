@@ -1,6 +1,5 @@
 from _pytest.config import Config
 from _pytest.monkeypatch import MonkeyPatch
-
 from infrastructure.utils.plugin_utilities import can_plugin_be_registered
 
 

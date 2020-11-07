@@ -1,5 +1,9 @@
 from __future__ import annotations
-from typing import Optional, List, Tuple
+
+from typing import List
+from typing import Optional
+from typing import Tuple
+
 from . import InfrastructureFunction
 
 ALL_FUNC_TUPLE_TYPE = Tuple[

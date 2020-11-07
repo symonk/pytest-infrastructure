@@ -2,7 +2,6 @@ from functools import partial
 from typing import Type
 
 import pytest
-
 from infrastructure import InfrastructureFunction
 from infrastructure.infra_functions import InfrastructureFunctionManager
 

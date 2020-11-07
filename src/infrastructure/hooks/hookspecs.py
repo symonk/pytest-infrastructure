@@ -1,7 +1,8 @@
 from collections import Callable
 from typing import List
 
-from pluggy import HookspecMarker, HookimplMarker
+from pluggy import HookimplMarker
+from pluggy import HookspecMarker
 
 
 hookspec = HookspecMarker("pytest")

@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 import functools
+import logging
 from concurrent.futures._base import Future
-from typing import List, Set, Optional
+from typing import List
+from typing import Optional
+from typing import Set
 
 import pytest
-from _pytest.config import PytestPluginManager, Config
-
+from _pytest.config import Config
+from _pytest.config import PytestPluginManager
 from infrastructure import InfrastructureFunction
 from infrastructure import InfrastructureFunctionManager
-from infrastructure.utils.plugin_utilities import can_plugin_be_registered
 from infrastructure.utils.constants import INFRASTRUCTURE_PLUGIN_NAME
-import logging
+from infrastructure.utils.plugin_utilities import can_plugin_be_registered
 
 logger = logging.getLogger(__name__)
 
