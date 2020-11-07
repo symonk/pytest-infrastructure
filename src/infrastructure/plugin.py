@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import functools
+from concurrent.futures._base import Future
 from typing import List, Set, Optional
 
 import pytest
@@ -24,11 +25,11 @@ def pytest_addoption(parser):
         help="Bypass the validation functions and execute testing without checking, disable the plugin completely",
     )
     group.addoption(
-        "--infra-thread-count",
+        "--parallel-bounds",
         action="store",
         type=int,
         default=2,
-        dest="infra_thread_count",
+        dest="parallel_bounds",
         help="If specified will use threads to execute infrastructure threads in parallel",
     )
     group.addoption(
@@ -38,6 +39,15 @@ def pytest_addoption(parser):
         dest="infra_env",
         help="Runtime environment; only_on_env= of validation functions will account for this"
         "Note: if not specified, all infrastructure functions will be executed.",
+    )
+    group.addoption(
+        "--use-processes",
+        action="store_true",
+        default=False,
+        dest="use_processes",
+        help="Execute via a process pool, rather than a thread pool."
+        "Depending on IO bound etc, your infra functions may be better "
+        "distributed via processes, not threads.",
     )
 
 
@@ -56,7 +66,7 @@ def pytest_configure(config):
         functions = config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(
             items=[]
         )
-        infra_plugin.validate_infrastructure(functions)
+        infra_plugin.validate_infrastructure(config, functions)
 
 
 class PytestValidate:
@@ -86,8 +96,24 @@ class PytestValidate:
     def register(cls, wrapper_func: InfrastructureFunction) -> None:
         cls._infrastructure_manager.register(wrapper_func)
 
-    def validate_infrastructure(self, functions: List[InfrastructureFunction]) -> None:
-        ...
+    def validate_infrastructure(self, config: Config) -> None:
+        from concurrent.futures import ThreadPoolExecutor
+        from concurrent.futures import ProcessPoolExecutor
+
+        bound_count = config.getoption("parallel_bounds")
+        instance = (
+            ThreadPoolExecutor
+            if not config.getoption("use_processes")
+            else ProcessPoolExecutor
+        )
+
+        parallel, isolated = self._infrastructure_manager.get_applicable(
+            self.environment
+        )
+        futures: List[Future] = []
+        with instance(max_workers=bound_count) as executor:
+            for non_isolated_function in parallel:
+                futures.append(executor.submit(non_isolated_function.executable))
 
     @pytest.fixture
     def infra_functions(self) -> List[InfrastructureFunction]:

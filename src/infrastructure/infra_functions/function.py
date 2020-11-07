@@ -14,3 +14,6 @@ class InfrastructureFunction:
         self.ignored_on = ignored_on or set()
         self.order = order
         self.result = RunResult()
+
+    def __call__(self, *args, **kwargs) -> RunResult:
+        return self.executable(*args, **kwargs)
