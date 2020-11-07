@@ -63,10 +63,8 @@ def pytest_configure(config):
     if can_plugin_be_registered(config):
         infra_plugin = PytestValidate(config)
         config.pluginmanager.register(infra_plugin, INFRASTRUCTURE_PLUGIN_NAME)
-        functions = config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(
-            items=[]
-        )
-        infra_plugin.validate_infrastructure(config, functions)
+        config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(items=[])
+        infra_plugin.validate_infrastructure(config)
 
 
 class PytestValidate:
@@ -81,7 +79,7 @@ class PytestValidate:
         self.config = config
         self.functions = None
         self.environment = config.getoption("infra_env")
-        self.thread_count = config.getoption("infra_thread_count")
+        self.thread_count = config.getoption("parallel_bounds")
 
     @pytest.hookimpl(tryfirst=True)
     def pytest_infrastructure_collect_modifyitems(
@@ -99,9 +97,10 @@ class PytestValidate:
     def validate_infrastructure(self, config: Config) -> None:
         from concurrent.futures import ThreadPoolExecutor
         from concurrent.futures import ProcessPoolExecutor
+        from concurrent.futures import as_completed
 
         bound_count = config.getoption("parallel_bounds")
-        instance = (
+        executor_instance = (
             ThreadPoolExecutor
             if not config.getoption("use_processes")
             else ProcessPoolExecutor
@@ -110,10 +109,17 @@ class PytestValidate:
         parallel, isolated = self._infrastructure_manager.get_applicable(
             self.environment
         )
-        futures: List[Future] = []
-        with instance(max_workers=bound_count) as executor:
+        run_results = []
+        with executor_instance(max_workers=bound_count) as executor:
+            futures: List[Future] = []
             for non_isolated_function in parallel:
                 futures.append(executor.submit(non_isolated_function.executable))
+            for future in as_completed(futures):
+                try:
+                    run_results.append(future.result())
+                except Exception as exc:
+                    # These are user defined, we need to catch anything here.
+                    run_results.append(exc)
 
     @pytest.fixture
     def infra_functions(self) -> List[InfrastructureFunction]:
