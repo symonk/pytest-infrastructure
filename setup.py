@@ -17,7 +17,7 @@ setup(
     maintainer_email="jackofspaces@gmail.com",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    entry_points={"pytest11": ["pytest_infrastructure = infrastructure.plugin"]},
+    entry_points={"pytest11": ["infrastructure = infrastructure.plugin"]},
     install_requires=install_requires,
     setup_requires=["setuptools_scm"],
     zip_safe=False,
