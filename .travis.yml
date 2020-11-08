@@ -9,7 +9,7 @@ install:
 script:
   - tox -- --cov=./
 after_success:
-  - codecov
+  - coveralls
 branches:
   only:
     - master
