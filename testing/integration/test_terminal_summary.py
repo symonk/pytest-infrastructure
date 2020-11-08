@@ -1,6 +1,7 @@
 import pytest
 
 
+@pytest.mark.skip(reason="need to rethink the auto-aware decorator")
 def test_terminal_summary_with_funcs(testdir) -> None:
     testdir.makepyfile(
         """
