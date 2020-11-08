@@ -11,10 +11,12 @@ class InfrastructureFunction:
         executable: Callable,
         ignored_on: Optional[Set[str]] = None,
         order: int = -1,
+        name: Optional[str] = None,
     ):
         self.executable = executable
         self.ignored_on = ignored_on or set()
         self.order = order
+        self.name = name or self.executable__name__
         self.result = RunResult()
 
     def __call__(self, *args, **kwargs) -> RunResult:
