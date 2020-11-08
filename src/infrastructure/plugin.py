@@ -9,6 +9,7 @@ from typing import Set
 import pytest
 from _pytest.config import Config
 from _pytest.config import PytestPluginManager
+from _pytest.terminal import TerminalReporter
 from infrastructure import InfrastructureFunction
 from infrastructure import InfrastructureFunctionManager
 from infrastructure.utils.constants import INFRASTRUCTURE_PLUGIN_NAME
@@ -128,20 +129,15 @@ class PytestValidate:
         return self._infrastructure_manager.get_squashed(self.environment)
 
     @pytest.hookimpl()
-    def pytest_report_header(self, config: Config) -> str:
-        if config.getoption("verbose") > 0:
-            message = (
-                "".join(
-                    [
-                        fx.__name__
-                        for fx in self._infrastructure_manager.get_squashed(
-                            self.environment
-                        )
-                    ]
-                )
-                or "In Infrastructure functions."
+    def pytest_terminal_summary(self, terminalreporter: TerminalReporter) -> None:
+        functions = self._infrastructure_manager.get_squashed(self.environment)
+        terminalreporter.write_sep("-", "pytest-infrastructure results")
+        if not functions:
+            terminalreporter.write_line(
+                "no pytest-infrastructure functions collected & executed."
             )
-            return message
+        for function in functions:
+            terminalreporter.write_line(repr(function))
 
 
 def infrastructure(ignored_on: Optional[Set[str]] = None, order: int = -1):

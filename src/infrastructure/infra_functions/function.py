@@ -19,3 +19,6 @@ class InfrastructureFunction:
 
     def __call__(self, *args, **kwargs) -> RunResult:
         return self.executable(*args, **kwargs)
+
+    def __repr__(self) -> str:
+        return f"{self.executable.__name__}: {repr(self.result)}"
