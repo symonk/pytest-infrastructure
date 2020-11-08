@@ -1,8 +1,7 @@
 import pytest
-from _pytest.pytester import Testdir
 
 
-def test_terminal_summary_with_funcs(testdir: Testdir) -> None:
+def test_terminal_summary_with_funcs(testdir) -> None:
     testdir.makepyfile(
         """
         from infrastructure import infrastructure
@@ -28,7 +27,7 @@ def test_terminal_summary_with_funcs(testdir: Testdir) -> None:
 
 
 @pytest.mark.skip(reason="need to rethink the auto-aware decorator")
-def test_terminal_summary_without_funcs(testdir: Testdir) -> None:
+def test_terminal_summary_without_funcs(testdir) -> None:
     result = testdir.runpytest("-s", "-v")
     result.stdout.fnmatch_lines(
         [
