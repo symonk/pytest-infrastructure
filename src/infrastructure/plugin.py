@@ -136,8 +136,9 @@ class PytestValidate:
             terminalreporter.write_line(
                 "no pytest-infrastructure functions collected & executed."
             )
-        for function in functions:
-            terminalreporter.write_line(repr(function))
+        else:
+            for function in functions:
+                terminalreporter.write_line(repr(function))
 
 
 def infrastructure(ignored_on: Optional[Set[str]] = None, order: int = -1):
