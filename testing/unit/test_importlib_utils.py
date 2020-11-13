@@ -9,8 +9,6 @@ def test_can_find_real_module(testdir) -> None:
 
 
 def test_cannot_import_no_such_file(testdir) -> None:
-    with pytest.raises(
-        FileNotFoundError, NotADirectoryError
-    ):  # win / unix compatibility
+    with pytest.raises(ImportError):
         path = testdir.makepyfile("import os")
-        import_module_from_path(path + "c")
+        import_module_from_path(path + "cwwewe")

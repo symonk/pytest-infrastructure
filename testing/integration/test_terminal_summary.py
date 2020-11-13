@@ -12,11 +12,7 @@ def test_terminal_summary_with_funcs(testdir) -> None:
     )
     result = testdir.runpytest("-s", "-v", f"--infra-module={path}")
     result.stdout.fnmatch_lines(
-        [
-            "------------------------ pytest-infrastructure results ------------------------",
-            "function_one: <*",
-            "function_two: <*",
-        ]
+        ["*pytest-infrastructure results*", "function_one: <*", "function_two: <*"]
     )
 
 
@@ -30,7 +26,7 @@ def test_terminal_summary_without_funcs(testdir) -> None:
     result = testdir.runpytest("-s", "-v", f"--infra-module={path}")
     result.stdout.fnmatch_lines(
         [
-            "------------------------ pytest-infrastructure results ------------------------",
+            "*pytest-infrastructure results*",
             "no pytest-infrastructure functions collected & executed.",
         ]
     )
