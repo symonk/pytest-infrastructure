@@ -9,6 +9,8 @@ def test_can_find_real_module(testdir) -> None:
 
 
 def test_cannot_import_no_such_file(testdir) -> None:
-    with pytest.raises(FileNotFoundError):
-        path = testdir.makepyfile("import os").join("madeup.py")
-        import_module_from_path(path)
+    with pytest.raises(
+        FileNotFoundError, NotADirectoryError
+    ):  # win / unix compatibility
+        path = testdir.makepyfile("import os")
+        import_module_from_path(path + "c")
