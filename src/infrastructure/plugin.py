@@ -74,7 +74,7 @@ def pytest_configure(config):
         infra_plugin = PytestValidate(config)
         config.pluginmanager.register(infra_plugin, INFRASTRUCTURE_PLUGIN_NAME)
         collected = config.pluginmanager.hook.pytest_infrastructure_perform_collect(module_path=config.getoption("infra_module"))
-        config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(items=collected)
+        config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(items=collected[0])
         infra_plugin.validate_infrastructure(config)
 
 
@@ -84,20 +84,23 @@ class PytestValidate:
     This plugin is only registered if the --bypass-infrastructure arg is not provided, else it is completely skipped!
     """
 
-    _infrastructure_manager: InfrastructureFunctionManager = InfrastructureFunctionManager()
-
     def __init__(self, config):
         self.config = config
         self.functions = None
         self.environment = config.getoption("infra_env")
         self.thread_count = config.getoption("parallel_bounds")
         self.infra_module = config.getoption("infra_module")
+        self.infra_manager: InfrastructureFunctionManager = InfrastructureFunctionManager()
 
     @pytest.hookimpl(tryfirst=True)
     def pytest_infrastructure_perform_collect(self, module_path: str) -> List[InfrastructureFunction]:
         infra_mod = import_module_from_path(module_path)
         from inspect import isfunction, getmembers
-        infra_functions = [InfrastructureFunction(func[1]) for func in getmembers(infra_mod) if isfunction(func[1])]
+        infra_functions = [InfrastructureFunction(executable=func[1],
+                                                  name=func[1].name,
+                                                  order=func[1].order,
+                                                  ignored_on=func[1].ignored_on)
+                           for func in getmembers(infra_mod) if isfunction(func[1]) and hasattr(func[1], 'is_infra')]
         return infra_functions
 
     @pytest.hookimpl(tryfirst=True)
@@ -107,11 +110,9 @@ class PytestValidate:
         """
         Default behaviour is to use the infrastructure functions which have been imported.
         """
-        items[:] = self._infrastructure_manager.get_applicable(self.environment)
-
-    @classmethod
-    def register(cls, wrapper_func: InfrastructureFunction) -> None:
-        cls._infrastructure_manager.register(wrapper_func)
+        for func in items:
+            self.infra_manager.register(func)
+        items[:] = self.infra_manager.get_applicable(self.environment)
 
     def validate_infrastructure(self, config: Config) -> None:
         from concurrent.futures import ThreadPoolExecutor
@@ -125,7 +126,7 @@ class PytestValidate:
             else ProcessPoolExecutor
         )
 
-        parallel, isolated = self._infrastructure_manager.get_applicable(
+        parallel, isolated = self.infra_manager.get_applicable(
             self.environment
         )
         run_results = []
@@ -142,11 +143,11 @@ class PytestValidate:
 
     @pytest.fixture
     def infra_functions(self) -> List[InfrastructureFunction]:
-        return self._infrastructure_manager.get_squashed(self.environment)
+        return self.infra_manager.get_squashed(self.environment)
 
     @pytest.hookimpl()
     def pytest_terminal_summary(self, terminalreporter: TerminalReporter) -> None:
-        functions = self._infrastructure_manager.get_squashed(self.environment)
+        functions = self.infra_manager.get_squashed(self.environment)
         terminalreporter.write_sep("-", "pytest-infrastructure results")
         if not functions:
             terminalreporter.write_line(
@@ -157,13 +158,18 @@ class PytestValidate:
                 terminalreporter.write_line(repr(function))
 
 
-def infrastructure(ignored_on: Optional[Set[str]] = None, order: int = -1):
+def infrastructure(ignored_on: Optional[Set[str]] = None, order: int = -1, name: str = None):
     """
     Bread and button of pytest-infrastructure.  Stores implementations of the decorator globally
     which are then available to the PytestValidate plugin to invoke and apply its custom logic to the pytest run.
     """
 
     def decorator(func):
+        func.ignored_on = ignored_on
+        func.order = order
+        func.is_infra = True
+        func.name = name or func.__name__
+
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)

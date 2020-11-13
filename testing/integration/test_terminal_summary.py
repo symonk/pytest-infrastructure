@@ -6,7 +6,7 @@ def test_terminal_summary_with_funcs(testdir) -> None:
         """
         from infrastructure import infrastructure
 
-        @infrastructure()
+        @infrastructure(name='')
         def function_one(): pass
 
         @infrastructure()
