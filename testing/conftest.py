@@ -3,7 +3,7 @@ from typing import Type
 
 import pytest
 from infrastructure import InfrastructureFunction
-from infrastructure.infra_functions import InfrastructureFunctionManager
+from infrastructure.function_management import InfrastructureFunctionManager
 
 pytest_plugins = "pytester"
 

@@ -1,4 +1,4 @@
-from infrastructure.utils.constants import INFRASTRUCTURE_PLUGIN_NAME
+from infrastructure.utility.constants import INFRASTRUCTURE_PLUGIN_NAME
 
 
 def test_when_collect_only_no_plugin_is_registered(testdir) -> None:

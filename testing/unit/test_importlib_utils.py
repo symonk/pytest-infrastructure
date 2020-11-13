@@ -1,5 +1,5 @@
 import pytest
-from infrastructure.utils.import_utilities import import_module_from_path
+from infrastructure.utility.import_utilities import import_module_from_path
 
 
 def test_can_find_real_module(testdir) -> None:

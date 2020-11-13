@@ -1,6 +1,6 @@
 from _pytest.config import Config
 from _pytest.monkeypatch import MonkeyPatch
-from infrastructure.utils.plugin_utilities import can_plugin_be_registered
+from infrastructure.utility.plugin_utilities import can_plugin_be_registered
 
 
 def test_plugin_register_help(pytestconfig: Config, monkeypatch: MonkeyPatch) -> None:

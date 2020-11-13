@@ -12,9 +12,9 @@ from _pytest.config import PytestPluginManager
 from _pytest.terminal import TerminalReporter
 from infrastructure import InfrastructureFunction
 from infrastructure import InfrastructureFunctionManager
-from infrastructure.utils.constants import INFRASTRUCTURE_PLUGIN_NAME
-from infrastructure.utils.import_utilities import import_module_from_path
-from infrastructure.utils.plugin_utilities import can_plugin_be_registered
+from infrastructure.utility.constants import INFRASTRUCTURE_PLUGIN_NAME
+from infrastructure.utility.import_utilities import import_module_from_path
+from infrastructure.utility.plugin_utilities import can_plugin_be_registered
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def pytest_addoption(parser):
 
 @pytest.hookimpl
 def pytest_addhooks(pluginmanager: PytestPluginManager) -> None:
-    from infrastructure.hooks.hookspecs import InfrastructureHookSpecs
+    from infrastructure.hookspecs import InfrastructureHookSpecs
 
     pluginmanager.add_hookspecs(InfrastructureHookSpecs)
 
