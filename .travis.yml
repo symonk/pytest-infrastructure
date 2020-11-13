@@ -6,6 +6,7 @@ python: 3.8
 
 install:
   - pip install tox-travis
+  - pip install codecov
 script:
   - tox -- --cov=./
 after_success:
