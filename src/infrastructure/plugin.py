@@ -13,6 +13,7 @@ from _pytest.terminal import TerminalReporter
 from infrastructure import InfrastructureFunction
 from infrastructure import InfrastructureFunctionManager
 from infrastructure.utils.constants import INFRASTRUCTURE_PLUGIN_NAME
+from infrastructure.utils.import_utilities import import_module_from_path
 from infrastructure.utils.plugin_utilities import can_plugin_be_registered
 
 logger = logging.getLogger(__name__)
@@ -26,6 +27,12 @@ def pytest_addoption(parser):
         default=False,
         dest="skip_infra",
         help="Bypass the validation functions and execute testing without checking, disable the plugin completely",
+    )
+    group.addoption(
+        "--infra-module",
+        action="store",
+        dest="infra_module",
+        help="Module containing @infrastructure decorated functions"
     )
     group.addoption(
         "--parallel-bounds",
@@ -66,7 +73,8 @@ def pytest_configure(config):
     if can_plugin_be_registered(config):
         infra_plugin = PytestValidate(config)
         config.pluginmanager.register(infra_plugin, INFRASTRUCTURE_PLUGIN_NAME)
-        config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(items=[])
+        collected = config.pluginmanager.hook.pytest_infrastructure_perform_collect(module_path=config.getoption("infra_module"))
+        config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(items=collected)
         infra_plugin.validate_infrastructure(config)
 
 
@@ -83,10 +91,18 @@ class PytestValidate:
         self.functions = None
         self.environment = config.getoption("infra_env")
         self.thread_count = config.getoption("parallel_bounds")
+        self.infra_module = config.getoption("infra_module")
+
+    @pytest.hookimpl(tryfirst=True)
+    def pytest_infrastructure_perform_collect(self, module_path: str) -> List[InfrastructureFunction]:
+        infra_mod = import_module_from_path(module_path)
+        from inspect import isfunction, getmembers
+        infra_functions = [InfrastructureFunction(func[1]) for func in getmembers(infra_mod) if isfunction(func[1])]
+        return infra_functions
 
     @pytest.hookimpl(tryfirst=True)
     def pytest_infrastructure_collect_modifyitems(
-        self, items: List[InfrastructureFunction]
+        self, items: List[Optional[InfrastructureFunction]]
     ) -> None:
         """
         Default behaviour is to use the infrastructure functions which have been imported.
@@ -148,16 +164,9 @@ def infrastructure(ignored_on: Optional[Set[str]] = None, order: int = -1):
     """
 
     def decorator(func):
-        wrapper = InfrastructureFunction(
-            executable=func, ignored_on=ignored_on, order=order
-        )
-        PytestValidate.register(wrapper)
-
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)
             return result
-
         return wrapper
-
     return decorator
