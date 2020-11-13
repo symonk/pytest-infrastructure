@@ -32,7 +32,7 @@ def pytest_addoption(parser):
         "--infra-module",
         action="store",
         dest="infra_module",
-        help="Module containing @infrastructure decorated functions"
+        help="Module containing @infrastructure decorated functions",
     )
     group.addoption(
         "--parallel-bounds",
@@ -73,8 +73,12 @@ def pytest_configure(config):
     if can_plugin_be_registered(config):
         infra_plugin = PytestValidate(config)
         config.pluginmanager.register(infra_plugin, INFRASTRUCTURE_PLUGIN_NAME)
-        collected = config.pluginmanager.hook.pytest_infrastructure_perform_collect(module_path=config.getoption("infra_module"))
-        config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(items=collected[0])
+        collected = config.pluginmanager.hook.pytest_infrastructure_perform_collect(
+            module_path=config.getoption("infra_module")
+        )
+        config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(
+            items=collected[0]
+        )
         infra_plugin.validate_infrastructure(config)
 
 
@@ -93,14 +97,22 @@ class PytestValidate:
         self.infra_manager: InfrastructureFunctionManager = InfrastructureFunctionManager()
 
     @pytest.hookimpl(tryfirst=True)
-    def pytest_infrastructure_perform_collect(self, module_path: str) -> List[InfrastructureFunction]:
+    def pytest_infrastructure_perform_collect(
+        self, module_path: str
+    ) -> List[InfrastructureFunction]:
         infra_mod = import_module_from_path(module_path)
         from inspect import isfunction, getmembers
-        infra_functions = [InfrastructureFunction(executable=func[1],
-                                                  name=func[1].name,
-                                                  order=func[1].order,
-                                                  ignored_on=func[1].ignored_on)
-                           for func in getmembers(infra_mod) if isfunction(func[1]) and hasattr(func[1], 'is_infra')]
+
+        infra_functions = [
+            InfrastructureFunction(
+                executable=func[1],
+                name=func[1].name,
+                order=func[1].order,
+                ignored_on=func[1].ignored_on,
+            )
+            for func in getmembers(infra_mod)
+            if isfunction(func[1]) and hasattr(func[1], "is_infra")
+        ]
         return infra_functions
 
     @pytest.hookimpl(tryfirst=True)
@@ -126,9 +138,7 @@ class PytestValidate:
             else ProcessPoolExecutor
         )
 
-        parallel, isolated = self.infra_manager.get_applicable(
-            self.environment
-        )
+        parallel, isolated = self.infra_manager.get_applicable(self.environment)
         run_results = []
         with executor_instance(max_workers=bound_count) as executor:
             futures: List[Future] = []
@@ -158,7 +168,9 @@ class PytestValidate:
                 terminalreporter.write_line(repr(function))
 
 
-def infrastructure(ignored_on: Optional[Set[str]] = None, order: int = -1, name: str = None):
+def infrastructure(
+    ignored_on: Optional[Set[str]] = None, order: int = -1, name: str = None
+):
     """
     Bread and button of pytest-infrastructure.  Stores implementations of the decorator globally
     which are then available to the PytestValidate plugin to invoke and apply its custom logic to the pytest run.
@@ -174,5 +186,7 @@ def infrastructure(ignored_on: Optional[Set[str]] = None, order: int = -1, name:
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)
             return result
+
         return wrapper
+
     return decorator

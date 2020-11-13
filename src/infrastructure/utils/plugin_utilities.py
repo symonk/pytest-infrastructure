@@ -28,4 +28,6 @@ def can_plugin_be_registered(config: Config) -> bool:
     not_pytest_help = not config.getoption("help")
     is_master = not is_xdist_worker(config)
     has_function_module = config.getoption("infra_module") is not None
-    return all((do_not_skip, not_collect_only, not_pytest_help, is_master, has_function_module))
+    return all(
+        (do_not_skip, not_collect_only, not_pytest_help, is_master, has_function_module)
+    )

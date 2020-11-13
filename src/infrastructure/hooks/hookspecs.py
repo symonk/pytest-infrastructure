@@ -10,7 +10,6 @@ hookimpl = HookimplMarker("pytest")
 
 
 class InfrastructureHookSpecs:
-
     @hookspec()
     def pytest_infrastructure_perform_collect(self, module_path: str) -> List[Callable]:
         """ Hook for performing the collection of infra structure functions, given the

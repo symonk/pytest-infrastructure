@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_terminal_summary_with_funcs(testdir) -> None:
     path = testdir.makepyfile(
         """
