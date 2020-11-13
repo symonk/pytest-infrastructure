@@ -56,27 +56,40 @@ pytest -m my_test_marker --infrastructure-env=staging --infrastructure-thread-co
 ---
 
 
-### How to Contribute to pytest-infrastructure :rocket:
-Thanks for considering contributions to the pytest-infrastructure plugin.  To help you get started please read the following documentation.  All contributions will be strongly considered and I welcome contributions from anyone, experienced or new; the pytest ecosystem can be very confusing at first glance so if you have any questions or think you are doing something wrong, please open a PR with what you have and we can pair up on it.
+# Contributing to pytest-infrastructure
 
- - Easier or small contributions are or will be attached to the: `easier` issue label
+#### Setting up with tox:
 
-#### Getting started :rocket:
-
-- Clone the repository using: `git@github.com:username/pytest-infrastructure.git (ssh recommended over HTTPS)`
-- Open the cloned folder in your IDE of choice, I would recommend `Pycharm` (or if you are hardcore and dont use an IDE)
-- Create a branch or if you prefer to work on forks do that
-- Push change(s) for issue/tickets you wish to solve
-- Open a PR
-
-`If you are solving an issue, please include closes #issue-number in the commit message, for example: "fixes #1"`
-
-#### PR Guidelines :rocket:
-Under **NO** circumstances will any PR be accepted with the following:
-
-- Failing travis CI build / tests
-- Decrease in unit test coverage percentage
-
-If your PR is failing on either of these two, it will only be considered mergable when they have been rectified (unless there is a core travis issue in which I will try to resolve immediately)
-
+ - Fork the pytest-infrastructure repository: [pytest-infrastructure](https://github.com/symonk/pytest-infrastructure/).
+ - Clone your fork locally
+    ```console
+        $ git clone git@github.com:YOUR_GIT_USERNAME/pytest-infrastructure.git
+        $ cd pytest_infrastructure
+        # now, create your own branch off "master":
+        $ git checkout -b your-bugfix-branch-name master
+    ```
+- Install pre-commit: [pre-commit](https://pre-commit.com)
+    ```console
+        $ pip install --user pre-commit
+        $ pre-commit install
+    ```
+- Install tox
+    ```console
+        pip install tox
+    ```
+- Run linting & tests! (linting runs on-commit automatically when you have configured pre-commit)
+    ```console
+        $ tox -e linting,py38
+        $ tox -e py37 -- --pdb (install in editable mode & enter debug on failure)
+    ```
 ---
+
+#### Setting up with a virtual environment:
+ - You can create and use a virtual env like so using an editable install with [testing] extras
+    ```console
+        $ python3 -m venv .venv
+        $ source .venv/bin/activate  # Linux
+        $ .venv/Scripts/activate.bat  # Windows
+        $ pip install -e ".[testing]"
+    ```
+- After this you can modify files and run pytest as normal
