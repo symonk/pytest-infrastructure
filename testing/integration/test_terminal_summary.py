@@ -30,3 +30,26 @@ def test_terminal_summary_without_funcs(testdir) -> None:
             "no pytest-infrastructure functions collected & executed.",
         ]
     )
+
+
+def test_meta_data_accuracy(testdir):
+    # TODO TEST THIS WITH PROCESSES, ITS NOT PICKELABLE ATM!
+    path = testdir.makepyfile(
+        """
+        from infrastructure import infrastructure
+
+        @infrastructure()
+        def do_it(): pass
+        """
+    )
+    result = testdir.runpytest(
+        f"--infra-module={path}",
+        "--max-workers=10",
+        "--infra-env=staging",
+        "--soft-validate",
+    )
+    result.stdout.fnmatch_lines(
+        [
+            "ExecutionMetaData*soft_run=True, infra_environment='staging', max_workers=10, use_processes=False*"
+        ]
+    )

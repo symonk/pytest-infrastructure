@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import functools
 import logging
 from concurrent.futures._base import Future
@@ -46,7 +48,6 @@ def pytest_addoption(parser):
     group.addoption(
         "--infra-env",
         action="store",
-        type=list,
         dest="infra_env",
         help="Runtime environment; only_on_env= of validation functions will account for this"
         "Note: if not specified, all infrastructure functions will be executed.",
@@ -101,7 +102,7 @@ class PytestValidate:
         self.config = config
         self.functions = None
         self.environment = config.getoption("infra_env")
-        self.thread_count = config.getoption("parallel_bounds")
+        self.thread_count = config.getoption("max_workers")
         self.infra_module = config.getoption("infra_module")
         self.infra_manager: InfrastructureFunctionManager = InfrastructureFunctionManager()
 
@@ -135,7 +136,7 @@ class PytestValidate:
         from concurrent.futures import ProcessPoolExecutor
         from concurrent.futures import as_completed
 
-        bound_count = config.getoption("parallel_bounds")
+        bound_count = config.getoption("max_workers")
         executor_instance = (
             ThreadPoolExecutor
             if not config.getoption("use_processes")
@@ -163,7 +164,7 @@ class PytestValidate:
     def pytest_terminal_summary(self, terminalreporter: TerminalReporter) -> None:
         functions = self.infra_manager.get_squashed(self.environment)
         terminalreporter.write_sep("-", "pytest-infrastructure results")
-        terminalreporter.write_line("execution status: ")
+        terminalreporter.write_line(f"{repr(self._resolve_meta_data())}")
         if not functions:
             terminalreporter.write_line(
                 "no pytest-infrastructure functions collected & executed."
@@ -171,6 +172,15 @@ class PytestValidate:
         else:
             for function in functions:
                 terminalreporter.write_line(repr(function))
+
+    def _resolve_meta_data(self) -> ExecutionMetaData:
+        return ExecutionMetaData(
+            infra_module=self.config.getoption("infra_module"),
+            soft_run=self.config.getoption("soft_validate"),
+            infra_environment=self.config.getoption("infra_env"),
+            max_workers=self.config.getoption("max_workers"),
+            use_processes=self.config.getoption("use_processes"),
+        )
 
 
 @dataclass(frozen=True, repr=True)
@@ -180,15 +190,15 @@ class ExecutionMetaData:
     :param infra_module: The string (full path) to a module that contains @infrastructure decorated functions
     :param soft_run: Are validation failure(s) enough to terminate the run, or should pytest continue executing tests.
     :param infra_environment: The infra environment, used to exclude/ignore certain functions.
-    :param processes_or_threads: Is the executor a (Thread|Process) pool executor.
     :param max_workers: Executor max_workers for the run.
+    :param use_processes: Use a process pool executor rather than the thread pool executor by default.
     """
 
     infra_module: str
     soft_run: bool
     infra_environment: str
-    processes_or_threads: str
     max_workers: int
+    use_processes: str
 
 
 def infrastructure(
