@@ -16,7 +16,9 @@ class InfrastructureFunction:
         self.executable = executable
         self.ignored_on = ignored_on or set()
         self.order = order
-        self.name = name if name.strip() else executable.__name__
+        self.name = (
+            executable.__name__ if name is None or not name.strip() else name.strip()
+        )
         self.result = RunResult()
 
     def __call__(self, *args, **kwargs) -> RunResult:
