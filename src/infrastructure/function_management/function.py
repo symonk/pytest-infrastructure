@@ -23,4 +23,4 @@ class InfrastructureFunction:
         return self.executable(*args, **kwargs)
 
     def __repr__(self) -> str:
-        return f"{self.executable.__name__}: {repr(self.result)}"
+        return f"{self.name}: {repr(self.result)}"

@@ -59,6 +59,14 @@ def pytest_addoption(parser):
         "Depending on IO bound etc, your infra functions may be better "
         "distributed via processes, not threads.",
     )
+    group.addoption(
+        "--soft-validate",
+        action="store_true",
+        default=False,
+        dest="soft_validate",
+        help="When enabled, validation failure(s) will not abort pytest early, but continue.  Terminal summary will"
+        "clearly indicate infrastructure related issues afterwards.",
+    )
 
 
 @pytest.hookimpl
@@ -77,7 +85,7 @@ def pytest_configure(config):
             module_path=config.getoption("infra_module")
         )
         config.pluginmanager.hook.pytest_infrastructure_collect_modifyitems(
-            items=collected[0]
+            items=collected[-1]
         )
         infra_plugin.validate_infrastructure(config)
 
@@ -104,14 +112,9 @@ class PytestValidate:
         from inspect import isfunction, getmembers
 
         infra_functions = [
-            InfrastructureFunction(
-                executable=func[1],
-                name=func[1].name,
-                order=func[1].order,
-                ignored_on=func[1].ignored_on,
-            )
+            func[1].infra_function
             for func in getmembers(infra_mod)
-            if isfunction(func[1]) and hasattr(func[1], "is_infra")
+            if isfunction(func[1]) and hasattr(func[1], "infra_function")
         ]
         return infra_functions
 
@@ -120,7 +123,7 @@ class PytestValidate:
         self, items: List[Optional[InfrastructureFunction]]
     ) -> None:
         """
-        Default behaviour is to use the infrastructure functions which have been imported.
+        Default behaviour is to use the infrastructure functions which have been imported via --infra-module
         """
         for func in items:
             self.infra_manager.register(func)
@@ -177,10 +180,10 @@ def infrastructure(
     """
 
     def decorator(func):
-        func.ignored_on = ignored_on
-        func.order = order
-        func.is_infra = True
-        func.name = name or func.__name__
+        infra_function = InfrastructureFunction(
+            executable=func, ignored_on=ignored_on, order=order, name=name
+        )
+        func.infra_function = infra_function
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
