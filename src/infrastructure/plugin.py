@@ -2,6 +2,7 @@
 import functools
 import logging
 from concurrent.futures._base import Future
+from dataclasses import dataclass
 from typing import List
 from typing import Optional
 from typing import Set
@@ -35,12 +36,12 @@ def pytest_addoption(parser):
         help="Module containing @infrastructure decorated functions",
     )
     group.addoption(
-        "--parallel-bounds",
+        "--max-workers",
         action="store",
         type=int,
         default=2,
-        dest="parallel_bounds",
-        help="If specified will use threads to execute infrastructure threads in parallel",
+        dest="max_workers",
+        help="How many max workers should the thread (or process) pool executor be permitted to use.",
     )
     group.addoption(
         "--infra-env",
@@ -162,6 +163,7 @@ class PytestValidate:
     def pytest_terminal_summary(self, terminalreporter: TerminalReporter) -> None:
         functions = self.infra_manager.get_squashed(self.environment)
         terminalreporter.write_sep("-", "pytest-infrastructure results")
+        terminalreporter.write_line("execution status: ")
         if not functions:
             terminalreporter.write_line(
                 "no pytest-infrastructure functions collected & executed."
@@ -169,6 +171,24 @@ class PytestValidate:
         else:
             for function in functions:
                 terminalreporter.write_line(repr(function))
+
+
+@dataclass(frozen=True, repr=True)
+class ExecutionMetaData:
+    """
+    Dataclass for encapsulation of the infrastructure execution meta data.
+    :param infra_module: The string (full path) to a module that contains @infrastructure decorated functions
+    :param soft_run: Are validation failure(s) enough to terminate the run, or should pytest continue executing tests.
+    :param infra_environment: The infra environment, used to exclude/ignore certain functions.
+    :param processes_or_threads: Is the executor a (Thread|Process) pool executor.
+    :param max_workers: Executor max_workers for the run.
+    """
+
+    infra_module: str
+    soft_run: bool
+    infra_environment: str
+    processes_or_threads: str
+    max_workers: int
 
 
 def infrastructure(
