@@ -1,8 +1,9 @@
+import uuid
 from collections.abc import Callable
 from typing import Optional
 from typing import Set
 
-from .run_result import RunResult
+from .run_result import Result
 
 
 class InfrastructureFunction:
@@ -19,14 +20,23 @@ class InfrastructureFunction:
         self.name = (
             executable.__name__ if name is None or not name.strip() else name.strip()
         )
-        self.result = RunResult()
+        self.uuid = str(uuid.uuid4())
+        self.result = Result(self.name, self._resolve_status(), self.uuid)
 
     def _resolve_status(self) -> str:
         statuses = {-1: "<Disabled>", 0: "<Concurrent>"}
         return statuses.get(self.order, "<Sequential>")
 
-    def __call__(self, *args, **kwargs) -> RunResult:
-        return self.executable(*args, **kwargs)
+    def __call__(self, *args, **kwargs) -> Result:
+        """
+        Calls the wrapped function.
+        """
+        try:
+            result = self.executable(*args, **kwargs)
+            self.result.exec_result = (True, "Passed!")
+            return result
+        except Exception as exc:
+            self.result.exec_result = (False, "Failed!", exc)
 
     def __repr__(self) -> str:
-        return f"{self.name}: {repr(self.result)} | Status: {self._resolve_status()}"
+        return repr(self.result)

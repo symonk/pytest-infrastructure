@@ -144,17 +144,13 @@ class PytestValidate:
         )
 
         parallel, isolated = self.infra_manager.get_applicable(self.environment)
-        run_results = []
+        results = []
         with executor_instance(max_workers=bound_count) as executor:
             futures: List[Future] = []
             for non_isolated_function in parallel:
-                futures.append(executor.submit(non_isolated_function.executable))
+                futures.append(executor.submit(non_isolated_function))
             for future in as_completed(futures):
-                try:
-                    run_results.append(future.result())
-                except Exception as exc:
-                    # These are user defined, we need to catch anything here.
-                    run_results.append(exc)
+                results.append(future.result())
 
     @pytest.fixture
     def infra_functions(self) -> List[InfrastructureFunction]:
