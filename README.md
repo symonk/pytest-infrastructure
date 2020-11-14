@@ -62,23 +62,23 @@ pytest -m my_test_marker --infrastructure-env=staging --infrastructure-thread-co
 
  - Fork the pytest-infrastructure repository: [pytest-infrastructure](https://github.com/symonk/pytest-infrastructure/).
  - Clone your fork locally
-    ```console
+    ```bash
         $ git clone git@github.com:YOUR_GIT_USERNAME/pytest-infrastructure.git
         $ cd pytest_infrastructure
         # now, create your own branch off "master":
         $ git checkout -b your-bugfix-branch-name master
     ```
 - Install pre-commit: [pre-commit](https://pre-commit.com)
-    ```console
+    ```bash
         $ pip install --user pre-commit
         $ pre-commit install
     ```
 - Install tox
-    ```console
+    ```bash
         pip install tox
     ```
 - Run linting & tests! (linting runs on-commit automatically when you have configured pre-commit)
-    ```console
+    ```bash
         $ tox -e linting,py38
         $ tox -e py37 -- --pdb (install in editable mode & enter debug on failure)
     ```
@@ -86,7 +86,7 @@ pytest -m my_test_marker --infrastructure-env=staging --infrastructure-thread-co
 
 #### Setting up with a virtual environment:
  - You can create and use a virtual env like so using an editable install with [testing] extras
-    ```console
+    ```bash
         $ python3 -m venv .venv
         $ source .venv/bin/activate  # Linux
         $ .venv/Scripts/activate.bat  # Windows
