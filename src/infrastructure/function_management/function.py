@@ -10,7 +10,7 @@ class InfrastructureFunction:
         self,
         executable: Callable,
         ignored_on: Optional[Set[str]] = None,
-        order: int = -1,
+        order: int = 0,
         name: Optional[str] = None,
     ):
         self.executable = executable
@@ -21,8 +21,12 @@ class InfrastructureFunction:
         )
         self.result = RunResult()
 
+    def _resolve_status(self) -> str:
+        statuses = {-1: "<Disabled>", 0: "<Concurrent>"}
+        return statuses.get(self.order, "<Sequential>")
+
     def __call__(self, *args, **kwargs) -> RunResult:
         return self.executable(*args, **kwargs)
 
     def __repr__(self) -> str:
-        return f"{self.name}: {repr(self.result)}"
+        return f"{self.name}: {repr(self.result)} | Status: {self._resolve_status()}"

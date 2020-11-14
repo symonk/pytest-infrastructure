@@ -172,7 +172,7 @@ class PytestValidate:
 
 
 def infrastructure(
-    ignored_on: Optional[Set[str]] = None, order: int = -1, name: str = None
+    ignored_on: Optional[Set[str]] = None, order: int = 0, name: str = None
 ):
     """
     Bread and button of pytest-infrastructure.  Stores implementations of the decorator globally
