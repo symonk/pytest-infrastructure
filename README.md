@@ -22,21 +22,21 @@ from pytest_infrastructure import InfrastructureException
 
 @infrastructure(order=-1)
 def this_runs_multi_threaded_upfront():
-    # order=-1 results in this function being invoked in a multi-threaded stage
+    # This function is considered disabled
     ...
-
 
 @infrastructure(order=0)
 def this_runs_sequentially_as_first_priority():
-    # order=0 means run sequential, but high priority
+    # order=0 (default) means the function is suitable for parallel execution
     ...
 
 
-@infrastructure(ignored_on={"staging"})
+@infrastructure(ignored_on={"staging"}, order=10, name='HelloWurld')
 def some_other_function_to_validate_the_stack():
-    # This by default (order=-1) will run multi-threaded upfront
-    # if the --infrastructure-env==staging then this will NOT be collected and executed
-    # This will fail and stop the pytest run early
+    # This function is executed if --infra-env != 'staging'
+    # This function is executed sequentially, with a weighted order of `10`
+    # This function uses a custom name for terminal reporting etc, rather than __name__
+    # This function is considered a fail as it raises an Exception: `InfrastructureException`
     raise InfrastructureException("web gui is not reachable.")
 ```
 
