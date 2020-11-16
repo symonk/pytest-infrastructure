@@ -16,7 +16,7 @@ def test_custom_name_is_ok(testdir):
     )
     result = testdir.runpytest(f"--infra-module={path}")
     assert result.ret == ExitCode.OK
-    result.stdout.fnmatch_lines(["Bazinga!: *"])
+    result.stdout.fnmatch_lines(["*Bazinga!*"])
 
 
 def test_name_none(testdir):
@@ -34,7 +34,7 @@ def test_name_none(testdir):
     )
     result = testdir.runpytest(f"--infra-module={path}")
     assert result.ret == ExitCode.OK
-    result.stdout.fnmatch_lines(["some_function: *"])
+    result.stdout.fnmatch_lines(["*some_function*"])
 
 
 def test_custom_name_empty_str(testdir):
@@ -52,4 +52,4 @@ def test_custom_name_empty_str(testdir):
     )
     result = testdir.runpytest(f"--infra-module={path}")
     assert result.ret == ExitCode.OK
-    result.stdout.fnmatch_lines(["some_function: *"])
+    result.stdout.fnmatch_lines(["*some_function*"])

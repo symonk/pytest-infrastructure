@@ -12,7 +12,7 @@ def test_terminal_summary_with_funcs(testdir) -> None:
     )
     result = testdir.runpytest("-s", "-v", f"--infra-module={path}")
     result.stdout.fnmatch_lines(
-        ["*pytest-infrastructure results*", "function_one: <*", "function_two: <*"]
+        ["*pytest-infrastructure results*", "*function_one*", "*function_two*"]
     )
 
 
